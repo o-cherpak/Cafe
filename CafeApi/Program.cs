@@ -1,4 +1,5 @@
 using CafeApi;
+using CafeApi.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

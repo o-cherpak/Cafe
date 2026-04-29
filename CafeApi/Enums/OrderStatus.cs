@@ -1,4 +1,4 @@
-﻿namespace CafeApi.Models;
+﻿namespace CafeApi.Enums;
 
 public enum OrderStatus
 {

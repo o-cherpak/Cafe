@@ -1,4 +1,6 @@
-﻿namespace CafeApi.Models;
+﻿using CafeApi.Enums;
+
+namespace CafeApi.Models;
 
 public class Order
 {
