@@ -6,13 +6,13 @@ namespace CafeApi.Repositories;
 
 public abstract class Repository<T> : IRepository<T> where T : class
 {
-    private readonly CafeDbContext _db;
+    protected readonly CafeDbContext Db;
     private readonly DbSet<T> _dbSet;
 
     protected Repository(CafeDbContext db)
     {
-        _db = db;
-        _dbSet = _db.Set<T>();
+        Db = db;
+        _dbSet = Db.Set<T>();
     }
 
     public async Task<T?> GetByIdAsync(int id)
@@ -22,7 +22,7 @@ public abstract class Repository<T> : IRepository<T> where T : class
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await _db.Set<T>().ToListAsync();
+        return await Db.Set<T>().ToListAsync();
     }
 
     public async Task AddAsync(T entity)
