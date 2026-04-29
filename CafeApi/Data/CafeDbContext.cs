@@ -55,6 +55,10 @@ public class CafeDbContext : DbContext
             .WithMany(c => c.Orders)
             .HasForeignKey(o => o.CustomerId);
 
+        modelBuilder.Entity<Order>()
+            .Property(o => o.Status)
+            .HasConversion<string>();
+
         modelBuilder.Entity<OrderItem>()
             .HasOne(oi => oi.MenuItem)
             .WithMany()
