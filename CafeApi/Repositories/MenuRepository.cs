@@ -14,7 +14,7 @@ public class MenuRepository : Repository<MenuItem>, IMenuItemRepository
 
     public async Task<IEnumerable<MenuItem>> GetItemsByCategoryAsync(ItemCategory category)
     {
-        return await Db.Set<MenuItem>()
+        return await Db.MenuItems
             .Where(menuItem => menuItem.Category == category)
             .ToListAsync();
     }

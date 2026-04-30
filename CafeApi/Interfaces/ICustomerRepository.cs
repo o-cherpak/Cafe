@@ -4,6 +4,6 @@ namespace CafeApi.Interfaces;
 
 public interface ICustomerRepository : IRepository<Customer>
 {
-    Task<Customer?> GetCustomerById(int id);
+    Task<Customer?> GetCustomerByEmailAsync(string email);
     
 }

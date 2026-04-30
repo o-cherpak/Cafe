@@ -1,6 +1,7 @@
 ﻿using CafeApi.Data;
 using CafeApi.Interfaces;
 using CafeApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CafeApi.Repositories;
 
@@ -10,8 +11,8 @@ public class CustomerRepository : Repository<Customer>, ICustomerRepository
     {
     }
 
-    public async Task<Customer?> GetCustomerById(int id)
+    public async Task<Customer?> GetCustomerByEmailAsync(string email)
     {
-        return await Db.Set<Customer>().FindAsync(id);
+        return await Db.Customers.FirstOrDefaultAsync(customer => customer.Email == email);
     }
 }
