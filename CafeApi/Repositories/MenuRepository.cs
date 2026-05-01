@@ -16,6 +16,7 @@ public class MenuRepository : Repository<MenuItem>, IMenuItemRepository
     {
         return await Db.MenuItems
             .Where(menuItem => menuItem.Category == category)
+            .AsNoTracking()
             .ToListAsync();
     }
 }

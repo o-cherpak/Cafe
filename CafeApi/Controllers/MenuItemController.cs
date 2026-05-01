@@ -1,4 +1,5 @@
 ﻿using CafeApi.DTOs;
+using CafeApi.Enums;
 using CafeApi.Interfaces;
 using CafeApi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +18,16 @@ public class MenuItemController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MenuItemDto>>> GetAll()
+    public async Task<ActionResult<IEnumerable<MenuItemDto>>> GetAll([FromQuery] ItemCategory? category)
     {
-        var menuItems = await _uow.MenuItems.GetAllAsync();
+        IEnumerable<MenuItem> menuItems;
+
+        if (category.HasValue)
+        {
+            menuItems = await _uow.MenuItems.GetItemsByCategoryAsync(category.Value);
+        }
+        else menuItems = await _uow.MenuItems.GetAllAsync();
+
 
         var result = menuItems.Select(item =>
             new MenuItemDto(
@@ -32,7 +40,7 @@ public class MenuItemController : ControllerBase
 
         return Ok(result);
     }
-    
+
     [HttpGet("{id}")]
     public async Task<ActionResult<MenuItemDto>> GetById(int id)
     {
