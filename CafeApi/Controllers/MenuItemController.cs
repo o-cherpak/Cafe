@@ -106,7 +106,7 @@ public class MenuItemController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<MenuItemDto>> Delete(int id)
+    public async Task<ActionResult> Delete(int id)
     {
         var item = await _uow.MenuItems.GetByIdAsync(id);
 
@@ -115,6 +115,6 @@ public class MenuItemController : ControllerBase
         _uow.MenuItems.Delete(item);
         await _uow.SaveChangesAsync();
 
-        return Ok(item);
+        return NoContent();
     }
 }
