@@ -22,7 +22,7 @@ public abstract class Repository<T> : IRepository<T> where T : class
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await Db.Set<T>().ToListAsync();
+        return await Db.Set<T>().AsNoTracking().ToListAsync();
     }
 
     public async Task AddAsync(T entity)
