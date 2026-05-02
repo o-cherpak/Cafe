@@ -1,7 +1,6 @@
 ﻿using CafeApi.DTOs;
 using CafeApi.Enums;
 using CafeApi.Interfaces;
-using CafeApi.Models;
 using CafeApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,20 +33,8 @@ public class OrderController : ControllerBase
             orders = orders.Where(o => o.Status == status.Value);
         }
 
-        var result = orders.Select(order => new OrderResponseDto(
-            order.Id,
-            order.Customer.Name,
-            order.Status,
-            order.CreatedAt,
-            Total: order.Items.Sum(i => i.UnitPrice * i.Quantity),
-            Items: order.Items.Select(i =>
-                new OrderItemResponseDto(
-                    i.MenuItem.Name,
-                    i.Quantity,
-                    i.UnitPrice
-                )
-            ).ToList()
-        ));
+        var result =
+            orders.Select(order => _orderService.ToDto(order));
 
         return Ok(result);
     }
@@ -59,21 +46,7 @@ public class OrderController : ControllerBase
 
         if (order is null) return NotFound();
 
-        var dto = new OrderResponseDto(
-            order.Id, order.Customer.Name,
-            order.Status,
-            order.CreatedAt,
-            Total: order.Items.Sum(i => i.UnitPrice * i.Quantity),
-            Items: order.Items.Select(i =>
-                new OrderItemResponseDto(
-                    i.MenuItem.Name,
-                    i.Quantity,
-                    i.UnitPrice
-                )
-            ).ToList()
-        );
-
-        return Ok(dto);
+        return Ok(_orderService.ToDto(order));
     }
 
     [HttpPost]
