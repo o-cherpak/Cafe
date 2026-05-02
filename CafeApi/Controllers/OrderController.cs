@@ -25,24 +25,13 @@ public class OrderController : ControllerBase
         [FromQuery] OrderStatus? status
     )
     {
-        IEnumerable<Order> orders;
+        var orders = customerId.HasValue
+            ? await _uof.Orders.GetOrderByCustomerIdAsync(customerId.Value)
+            : await _uof.Orders.GetAllAsync();
 
-        if (customerId.HasValue && status.HasValue)
+        if (status.HasValue)
         {
-            orders = await _uof.Orders.GetOrderByCustomerIdAsync(customerId.Value);
-            orders = orders.Where(order => order.Status == status.Value);
-        }
-        else if (customerId.HasValue && !status.HasValue)
-        {
-            orders = await _uof.Orders.GetOrderByCustomerIdAsync(customerId.Value);
-        }
-        else if (!customerId.HasValue && status.HasValue)
-        {
-            orders = await _uof.Orders.GetOrderByStatusAsync(status.Value);
-        }
-        else
-        {
-            orders = await _uof.Orders.GetAllAsync();
+            orders = orders.Where(o => o.Status == status.Value);
         }
 
         var result = orders.Select(order => new OrderResponseDto(
