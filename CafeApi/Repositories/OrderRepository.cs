@@ -12,6 +12,16 @@ public class OrderRepository : Repository<Order>, IOrderRepository
     {
     }
 
+    public override async Task<IEnumerable<Order>> GetAllAsync()
+    {
+        return await Db.Orders
+            .Include(o => o.Customer)
+            .Include(o => o.Items)
+            .ThenInclude(i => i.MenuItem)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<Order>> GetOrderByStatusAsync(OrderStatus status)
     {
         return await Db.Orders.Where(order => order.Status == status)

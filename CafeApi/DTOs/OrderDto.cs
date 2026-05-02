@@ -10,7 +10,7 @@ public record OrderResponseDto(
     OrderStatus Status,
     DateTime CreatedAt,
     decimal Total,
-    List<OrderItemDto> Items);
+    List<OrderItemResponseDto> Items);
 
 public record OrderItemDto(int MenuItemId, int Quantity);
 
