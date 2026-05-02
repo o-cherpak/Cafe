@@ -28,12 +28,18 @@ public class OrderRepository : Repository<Order>, IOrderRepository
             .Include(o => o.Customer)
             .Include(o => o.Items)
             .ThenInclude(i => i.MenuItem)
+            .AsNoTracking()
             .FirstOrDefaultAsync(o => o.Id == id);
     }
 
     public async Task<IEnumerable<Order>> GetOrderByCustomerIdAsync(int customerId)
     {
-        return await Db.Orders.Where(order => order.CustomerId == customerId)
+        return await Db.Orders
+            .Where(order => order.CustomerId == customerId)
+            .Include(o => o.Customer)
+            .Include(o => o.Items)
+            .ThenInclude(i => i.MenuItem)
+            .AsNoTracking()
             .ToListAsync();
     }
 }
