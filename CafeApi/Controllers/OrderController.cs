@@ -11,11 +11,12 @@ namespace CafeApi.Controllers;
 public class OrderController : ControllerBase
 {
     private readonly IUnitOfWork _uof;
-    private readonly OrderService _orderService;
+    private readonly IOrderService _orderService;
 
-    public OrderController(IUnitOfWork uof)
+    public OrderController(IUnitOfWork uof, IOrderService orderService)
     {
         _uof = uof;
+        _orderService = orderService;
     }
 
     [HttpGet]
@@ -42,7 +43,7 @@ public class OrderController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<OrderResponseDto>> GetById(int id)
     {
-        var order = await _uof.Orders.GetByIdAsync(id);
+        var order = await _uof.Orders.GetWithItemsAsync(id);
 
         if (order is null) return NotFound();
 
@@ -56,10 +57,10 @@ public class OrderController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
-    [HttpPut]
-    public async Task<ActionResult> Update(int id, OrderStatus status)
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> Update(int id, [FromBody] OrderStatus status)
     {
-        var order = await _uof.Orders.GetByIdAsync(id);
+        var order = await _uof.Orders.GetWithItemsAsync(id);
 
         if (order is null) return NotFound();
 

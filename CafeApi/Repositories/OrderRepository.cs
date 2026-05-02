@@ -22,6 +22,15 @@ public class OrderRepository : Repository<Order>, IOrderRepository
             .ToListAsync();
     }
 
+    public async Task<Order?> GetWithItemsAsync(int id)
+    {
+        return await Db.Orders
+            .Include(o => o.Customer)
+            .Include(o => o.Items)
+            .ThenInclude(i => i.MenuItem)
+            .FirstOrDefaultAsync(o => o.Id == id);
+    }
+
     public async Task<IEnumerable<Order>> GetOrderByCustomerIdAsync(int customerId)
     {
         return await Db.Orders.Where(order => order.CustomerId == customerId)

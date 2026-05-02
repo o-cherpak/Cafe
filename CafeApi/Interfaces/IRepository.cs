@@ -1,6 +1,4 @@
-﻿using CafeApi.Data;
-
-namespace CafeApi.Interfaces;
+﻿namespace CafeApi.Interfaces;
 
 public interface IRepository<T>
 {

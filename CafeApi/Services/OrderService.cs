@@ -80,7 +80,7 @@ public class OrderService : IOrderService
         _uow.Customers.Update(customer);
         await _uow.SaveChangesAsync();
 
-        var saved = await _uow.Orders.GetByIdAsync(order.Id);
+        var saved = await _uow.Orders.GetWithItemsAsync(order.Id);
 
         if (saved is null)
             throw new KeyNotFoundException("Order not found");
