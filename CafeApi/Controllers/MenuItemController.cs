@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CafeApi.Controllers;
 
 [ApiController]
-[Route("/api/[controller]")]
+[Route("api/[controller]")]
 public class MenuItemController : ControllerBase
 {
     private readonly IUnitOfWork _uow;

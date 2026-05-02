@@ -45,8 +45,8 @@ public class CustomerController : ControllerBase
         return Ok(dto);
     }
 
-    [HttpGet("{email}")]
-    public async Task<ActionResult<CustomerDto>> GetByEmail(string email)
+    [HttpGet("by-email")]
+    public async Task<ActionResult<CustomerDto>> GetByEmail([FromQuery] string email)
     {
         var customer = await _uow.Customers.GetCustomerByEmailAsync(email);
 
