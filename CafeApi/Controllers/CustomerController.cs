@@ -65,6 +65,10 @@ public class CustomerController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<CustomerDto>> Create(CreateCustomerDto dto)
     {
+        var customer = await _uow.Customers.GetCustomerByEmailAsync(dto.Email);
+
+        if (customer is not null) return Conflict("Customer with this email already exist");
+
         var newCustomer = new Customer
         {
             Name = dto.Name,
