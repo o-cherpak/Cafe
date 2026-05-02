@@ -11,9 +11,9 @@ namespace CafeApi.Controllers;
 public class OrderController : ControllerBase
 {
     private readonly IUnitOfWork _uof;
-    private readonly IOrderService _orderService;
+    private readonly OrderService _orderService;
 
-    public OrderController(IUnitOfWork uof, IOrderService orderService)
+    public OrderController(IUnitOfWork uof, OrderService orderService)
     {
         _uof = uof;
         _orderService = orderService;
