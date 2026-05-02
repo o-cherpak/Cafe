@@ -9,7 +9,7 @@ namespace CafeApi.Controllers;
 [Route("api/[controller]")]
 public class CustomerController : ControllerBase
 {
-    private IUnitOfWork _uow;
+    private readonly IUnitOfWork _uow;
 
     public CustomerController(IUnitOfWork uow)
     {
