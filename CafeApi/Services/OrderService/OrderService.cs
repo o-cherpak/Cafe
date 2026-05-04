@@ -3,7 +3,7 @@ using CafeApi.Enums;
 using CafeApi.Interfaces;
 using CafeApi.Models;
 
-namespace CafeApi.Services;
+namespace CafeApi.Services.OrderService;
 
 public class OrderService : IOrderService
 {
@@ -14,7 +14,7 @@ public class OrderService : IOrderService
         _uow = uow;
     }
 
-    public OrderResponseDto ToDto(Order order)
+    private OrderResponseDto ToDto(Order order)
     {
         var dto = new OrderResponseDto(
             order.Id, order.Customer.Name,
@@ -31,6 +31,34 @@ public class OrderService : IOrderService
         );
 
         return dto;
+    }
+
+    public async Task<IEnumerable<OrderResponseDto>> GetAll
+    (
+        int? customerId,
+        OrderStatus? status
+    )
+    {
+        var orders = customerId.HasValue
+            ? await _uow.Orders.GetOrderByCustomerIdAsync(customerId.Value)
+            : await _uow.Orders.GetAllAsync();
+
+        if (status.HasValue)
+        {
+            orders = orders.Where(o => o.Status == status.Value);
+        }
+
+        return orders.Select(ToDto);
+    }
+
+    public async Task<OrderResponseDto> GetById(int id)
+    {
+        var order = await _uow.Orders.GetWithItemsAsync(id);
+
+        if (order is null)
+            throw new KeyNotFoundException("Order not found");
+
+        return ToDto(order);
     }
 
     public async Task<OrderResponseDto> CreateAsync(CreateOrderDto dto)
@@ -86,5 +114,16 @@ public class OrderService : IOrderService
             throw new KeyNotFoundException("Order not found");
 
         return ToDto(saved);
+    }
+
+    public async Task Update(int id, OrderStatus status)
+    {
+        var order = await _uow.Orders.GetWithItemsAsync(id);
+
+        if (order is null) 
+            throw new KeyNotFoundException("Order not found");
+
+        order.Status = status;
+        await _uow.SaveChangesAsync();
     }
 }

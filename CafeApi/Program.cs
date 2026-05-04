@@ -2,6 +2,7 @@ using CafeApi.Data;
 using CafeApi.Interfaces;
 using CafeApi.Repositories;
 using CafeApi.Services;
+using CafeApi.Services.OrderService;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 

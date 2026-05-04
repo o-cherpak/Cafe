@@ -1,7 +1,6 @@
 ﻿using CafeApi.DTOs;
 using CafeApi.Enums;
-using CafeApi.Interfaces;
-using CafeApi.Services;
+using CafeApi.Services.OrderService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CafeApi.Controllers;
@@ -10,12 +9,10 @@ namespace CafeApi.Controllers;
 [Route("api/[controller]")]
 public class OrderController : ControllerBase
 {
-    private readonly IUnitOfWork _uof;
-    private readonly OrderService _orderService;
+    private readonly IOrderService _orderService;
 
-    public OrderController(IUnitOfWork uof, OrderService orderService)
+    public OrderController(IOrderService orderService)
     {
-        _uof = uof;
         _orderService = orderService;
     }
 
@@ -25,29 +22,16 @@ public class OrderController : ControllerBase
         [FromQuery] OrderStatus? status
     )
     {
-        var orders = customerId.HasValue
-            ? await _uof.Orders.GetOrderByCustomerIdAsync(customerId.Value)
-            : await _uof.Orders.GetAllAsync();
-
-        if (status.HasValue)
-        {
-            orders = orders.Where(o => o.Status == status.Value);
-        }
-
-        var result =
-            orders.Select(order => _orderService.ToDto(order));
-
-        return Ok(result);
+        var listDto = await _orderService.GetAll(customerId, status);
+        return Ok(listDto);
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<OrderResponseDto>> GetById(int id)
     {
-        var order = await _uof.Orders.GetWithItemsAsync(id);
+        var dto = await _orderService.GetById(id);
 
-        if (order is null) return NotFound();
-
-        return Ok(_orderService.ToDto(order));
+        return Ok(dto);
     }
 
     [HttpPost]
@@ -60,12 +44,7 @@ public class OrderController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<ActionResult> Update(int id, [FromBody] OrderStatus status)
     {
-        var order = await _uof.Orders.GetWithItemsAsync(id);
-
-        if (order is null) return NotFound();
-
-        order.Status = status;
-        await _uof.SaveChangesAsync();
+        await _orderService.Update(id, status);
 
         return NoContent();
     }
