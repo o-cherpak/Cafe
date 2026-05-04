@@ -1,6 +1,6 @@
 ﻿using CafeApi.DTOs;
 using CafeApi.Interfaces;
-using CafeApi.Models;
+using CafeApi.Services.CustomerService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CafeApi.Controllers;
@@ -9,38 +9,25 @@ namespace CafeApi.Controllers;
 [Route("api/[controller]")]
 public class CustomerController : ControllerBase
 {
-    private readonly IUnitOfWork _uow;
+    private readonly ICustomerService _customerService;
 
-    public CustomerController(IUnitOfWork uow)
+    public CustomerController(ICustomerService customerService)
     {
-        _uow = uow;
+        _customerService = customerService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAll()
     {
-        var customers = await _uow.Customers.GetAllAsync();
+        var listDto = await _customerService.GetAll();
 
-        var result = customers.Select(customer =>
-            new CustomerDto(customer.Id, customer.Name, customer.Email, customer.BonusPoints)
-        );
-
-        return Ok(result);
+        return Ok(listDto);
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<CustomerDto>> GetById(int id)
     {
-        var customer = await _uow.Customers.GetByIdAsync(id);
-
-        if (customer is null) return NotFound();
-
-        var dto = new CustomerDto(
-            customer.Id,
-            customer.Name,
-            customer.Email,
-            customer.BonusPoints
-        );
+        var dto = await _customerService.GetById(id);
 
         return Ok(dto);
     }
@@ -48,61 +35,26 @@ public class CustomerController : ControllerBase
     [HttpGet("by-email")]
     public async Task<ActionResult<CustomerDto>> GetByEmail([FromQuery] string email)
     {
-        var customer = await _uow.Customers.GetCustomerByEmailAsync(email);
-
-        if (customer is null) return NotFound();
-
-        var dto = new CustomerDto(
-            customer.Id,
-            customer.Name,
-            customer.Email,
-            customer.BonusPoints
-        );
-
+        var dto = await _customerService.GetByEmail(email);
         return Ok(dto);
     }
 
     [HttpPost]
     public async Task<ActionResult<CustomerDto>> Create(CreateCustomerDto dto)
     {
-        var customer = await _uow.Customers.GetCustomerByEmailAsync(dto.Email);
-
-        if (customer is not null) return Conflict("Customer with this email already exist");
-
-        var newCustomer = new Customer
-        {
-            Name = dto.Name,
-            Email = dto.Email,
-            BonusPoints = 0,
-            RegisteredAt = DateTime.UtcNow,
-        };
-
-        await _uow.Customers.AddAsync(newCustomer);
-        await _uow.SaveChangesAsync();
+        var responseDto = await _customerService.Create(dto);
 
         return CreatedAtAction(
             nameof(GetById),
-            new { id = newCustomer.Id },
-            new CustomerDto(
-                newCustomer.Id,
-                newCustomer.Name,
-                newCustomer.Email,
-                newCustomer.BonusPoints
-            )
+            new { id = responseDto.Id },
+            responseDto
         );
     }
 
     [HttpPut("{id}")]
     public async Task<ActionResult> Update(int id, UpdateCustomerDto dto)
     {
-        var item = await _uow.Customers.GetByIdAsync(id);
-
-        if (item is null) return NotFound();
-
-        if (dto.Name is not null) item.Name = dto.Name;
-        if (dto.Email is not null) item.Email = dto.Email;
-
-        await _uow.SaveChangesAsync();
+        await _customerService.Update(id, dto);
 
         return NoContent();
     }
@@ -110,12 +62,7 @@ public class CustomerController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        var item = await _uow.Customers.GetByIdAsync(id);
-
-        if (item is null) return NotFound();
-
-        _uow.Customers.Delete(item);
-        await _uow.SaveChangesAsync();
+        await _customerService.Delete(id);
 
         return NoContent();
     }
