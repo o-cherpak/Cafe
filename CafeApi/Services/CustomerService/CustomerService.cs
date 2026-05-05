@@ -1,5 +1,5 @@
 ﻿using CafeApi.DTOs;
-using CafeApi.Enums;
+using CafeApi.Exceptions;
 using CafeApi.Interfaces;
 using CafeApi.Models;
 
@@ -60,7 +60,7 @@ public class CustomerService : ICustomerService
         var customer = await _uow.Customers.GetCustomerByEmailAsync(dto.Email);
 
         if (customer is not null)
-            throw new InvalidOperationException("Customer with this email already exists");
+            throw new ConflictException("Customer with this email already exists");
 
         var newCustomer = new Customer
         {
