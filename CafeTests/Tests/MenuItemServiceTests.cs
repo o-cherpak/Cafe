@@ -20,8 +20,7 @@ public class MenuItemServiceTests
         var uow = new UnitOfWork(_db);
         _service = new MenuItemService(uow);
     }
-
-
+    
     [Fact]
     public async Task GetAllTest()
     {
