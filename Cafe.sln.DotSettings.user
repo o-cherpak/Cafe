@@ -4,7 +4,17 @@
     &lt;TestId&gt;xUnit::0A3875D8-956C-40F2-A5F5-4641A9B1DD44::net10.0::CafeTests.Tests.CustomerServiceTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5a787f52_002De506_002D45c5_002Da082_002Da8726279717c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CreateTest #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::0A3875D8-956C-40F2-A5F5-4641A9B1DD44::net10.0::CafeTests.Tests.OrderServiceTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6263c74e_002D0603_002D4ae4_002Daf5b_002D74f569db8562/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=9035b5a0_002D99a1_002D4eee_002Db3f2_002D082406b872cd/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::0A3875D8-956C-40F2-A5F5-4641A9B1DD44::net10.0::CafeTests.Tests.OrderServiceTests.CreateTest&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
