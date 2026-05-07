@@ -5,7 +5,7 @@ using CafeApi.Repositories;
 using CafeApi.Services.CustomerService;
 using FluentAssertions;
 
-namespace CafeTests.Tests;
+namespace CafeTests.UnitTests;
 
 public class CustomerServiceTests
 {

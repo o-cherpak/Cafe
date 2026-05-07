@@ -6,7 +6,7 @@ using CafeApi.Repositories;
 using CafeApi.Services.OrderService;
 using FluentAssertions;
 
-namespace CafeTests.Tests;
+namespace CafeTests.UnitTests;
 
 public class OrderServiceTests
 {
