@@ -2,7 +2,6 @@ using CafeApi.Data;
 using CafeApi.Interfaces;
 using CafeApi.Middleware;
 using CafeApi.Repositories;
-using CafeApi.Services;
 using CafeApi.Services.CustomerService;
 using CafeApi.Services.MenuItemService;
 using CafeApi.Services.OrderService;
