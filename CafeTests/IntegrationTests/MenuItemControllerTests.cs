@@ -28,7 +28,7 @@ public class MenuItemControllerTests : IClassFixture<CustomWebApplicationFactory
         response.EnsureSuccessStatusCode();
     }
 
-
+    
     [Fact]
     public async Task GetByIdTest()
     {
@@ -46,7 +46,7 @@ public class MenuItemControllerTests : IClassFixture<CustomWebApplicationFactory
     }
 
     [Fact]
-    public async Task GetById_WhenNotFound_Returns404()
+    public async Task GetById_NotFoundTest()
     {
         var response = await _client.GetAsync("/api/menuitem/999");
 

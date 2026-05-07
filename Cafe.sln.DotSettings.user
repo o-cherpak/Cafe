@@ -5,6 +5,11 @@
     &lt;TestId&gt;xUnit::0A3875D8-956C-40F2-A5F5-4641A9B1DD44::net10.0::CafeTests.IntegrationTests.MenuItemControllerTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=23de8380_002D6cb6_002D4809_002Db854_002D595b92bd2a5c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CustomerControllerTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::0A3875D8-956C-40F2-A5F5-4641A9B1DD44::net10.0::CafeTests.IntegrationTests.CustomerControllerTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	
 	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6263c74e_002D0603_002D4ae4_002Daf5b_002D74f569db8562/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
