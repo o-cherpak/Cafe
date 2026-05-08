@@ -1,5 +1,6 @@
 ﻿using CafeApi.Data;
 using CafeApi.DTOs;
+using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Models;
 using CafeApi.Repositories;
 using CafeApi.Services.CustomerService;
@@ -52,6 +53,12 @@ public class CustomerServiceTests
         result1.Email.Should().Be("emailC.com");
         result2.Name.Should().Be("Gabriel");
     }
+    
+    [Fact]
+    public async Task GetById_NotFoundTest()
+    {
+        await Assert.ThrowsAsync<CustomerNotFound>(() => _service.GetById(21456));
+    }
 
     [Fact]
     public async Task GetByEmailTest()
@@ -63,6 +70,12 @@ public class CustomerServiceTests
 
         result1.Name.Should().Be("Artur");
         result2.Name.Should().Be("Alex");
+    }
+    
+    [Fact]
+    public async Task GetByEmail_NotFoundTest()
+    {
+        await Assert.ThrowsAsync<CustomerNotFound>(() => _service.GetByEmail("000000000"));
     }
 
     [Fact]
