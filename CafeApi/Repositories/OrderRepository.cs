@@ -32,6 +32,16 @@ public class OrderRepository : Repository<Order>, IOrderRepository
             .FirstOrDefaultAsync(o => o.Id == id);
     }
 
+    public override async Task<Order?> GetByIdAsync(int id)
+    {
+        return await Db.Orders
+            .Include(o => o.Customer)
+            .Include(o => o.Items)
+            .ThenInclude(i => i.MenuItem)
+            .FirstOrDefaultAsync(o => o.Id == id);
+    }
+
+
     public async Task<IEnumerable<Order>> GetOrderByCustomerIdAsync(int customerId)
     {
         return await Db.Orders

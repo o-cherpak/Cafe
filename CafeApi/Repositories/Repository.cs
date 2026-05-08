@@ -15,7 +15,7 @@ public abstract class Repository<T> : IRepository<T> where T : class
         _dbSet = Db.Set<T>();
     }
 
-    public async Task<T?> GetByIdAsync(int id)
+    public virtual async Task<T?> GetByIdAsync(int id)
     {
         return await _dbSet.FindAsync(id);
     }
