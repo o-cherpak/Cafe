@@ -125,7 +125,7 @@ public class OrderServiceTests
     }
 
     [Fact]
-    public async Task Create_AddBonusesTEst()
+    public async Task Create_AddBonusesTest()
     {
         await Seed();
 
@@ -142,6 +142,26 @@ public class OrderServiceTests
         foundedOrder.Id.Should().Be(createOrder.Id);
         var updatedCustomer = await _db.Customers.FindAsync(_customerList[0].Id);
         updatedCustomer!.BonusPoints.Should().Be(750);
+    }
+
+    [Fact]
+    public async Task UpdateStatusTest()
+    {
+        await Seed();
+
+        var dto = new CreateOrderDto(
+            _customerList[0].Id,
+            [new OrderItemDto(_menuList[0].Id, 3)]
+        );
+
+        var order = await _service.CreateAsync(dto);
+        await _service.Update(order.Id, OrderStatus.Cancelled);
+
+        var updatedOrder = await _service.GetById(order.Id);
+
+        updatedOrder.Id.Should().Be(order.Id);
+        updatedOrder.Items.First().Quantity.Should().Be(3);
+        updatedOrder.Status.Should().Be(OrderStatus.Cancelled);
     }
     
 }
