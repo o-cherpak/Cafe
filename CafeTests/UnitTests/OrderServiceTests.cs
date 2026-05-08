@@ -158,26 +158,6 @@ public class OrderServiceTests
     }
 
     [Fact]
-    public async Task Create_AddBonusesTest()
-    {
-        await Seed();
-
-        var dto = new CreateOrderDto(
-            _customerList[0].Id,
-            [new OrderItemDto(_menuList[0].Id, 1)]
-        );
-
-        var createOrder = await _service.CreateAsync(dto);
-
-        _db.Orders.Should().HaveCount(1);
-        var foundedOrder = _db.Orders.First();
-
-        foundedOrder.Id.Should().Be(createOrder.Id);
-        var updatedCustomer = await _db.Customers.FindAsync(_customerList[0].Id);
-        updatedCustomer!.BonusPoints.Should().Be(750);
-    }
-
-    [Fact]
     public async Task UpdateStatusTest()
     {
         await Seed();
@@ -195,5 +175,29 @@ public class OrderServiceTests
         updatedOrder.Id.Should().Be(order.Id);
         updatedOrder.Items.First().Quantity.Should().Be(3);
         updatedOrder.Status.Should().Be(OrderStatus.Cancelled);
+    }
+    
+    [Fact]
+    public async Task UpdateStatus_AddBonusesTest()
+    {
+        await Seed();
+        int itemQuantity = 3;
+        int expectedPoints = (int)_menuList[0].Price * itemQuantity * 10;
+
+        var dto = new CreateOrderDto(
+            _customerList[0].Id,
+            [new OrderItemDto(_menuList[0].Id, itemQuantity)]
+        );
+
+        var order = await _service.CreateAsync(dto);
+        await _service.Update(order.Id, OrderStatus.Completed);
+
+        var updatedOrder = await _service.GetById(order.Id);
+
+        var updatedCustomer = await _db.Customers.FindAsync(_customerList[0].Id);
+        updatedCustomer!.BonusPoints.Should().Be(expectedPoints);
+        updatedOrder.Id.Should().Be(order.Id);
+        updatedOrder.Items.First().Quantity.Should().Be(3);
+        updatedOrder.Status.Should().Be(OrderStatus.Completed);
     }
 }

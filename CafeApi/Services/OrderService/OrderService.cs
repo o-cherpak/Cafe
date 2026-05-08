@@ -61,7 +61,7 @@ public class OrderService : IOrderService
 
         return ToDto(order);
     }
-    
+
     public async Task<IEnumerable<OrderResponseDto>> GetOrderByCustomerId(int id)
     {
         var orders = await _uow.Orders.GetOrderByCustomerIdAsync(id);
@@ -107,10 +107,6 @@ public class OrderService : IOrderService
             );
         }
 
-        //Bonus
-        var total = order.Items.Sum(i => i.UnitPrice * i.Quantity);
-        customer.BonusPoints += (int)(total * 10);
-
         //Save
         await _uow.Orders.AddAsync(order);
         _uow.Customers.Update(customer);
@@ -128,8 +124,14 @@ public class OrderService : IOrderService
     {
         var order = await _uow.Orders.GetByIdAsync(id);
 
-        if (order is null) 
+        if (order is null)
             throw new OrderNotFound($"Order with {id} id not found");
+
+        if (order.Status != OrderStatus.Completed && status == OrderStatus.Completed)
+        {
+            var total = order.Items.Sum(i => i.UnitPrice * i.Quantity);
+            order.Customer.BonusPoints += (int)(total * 10);
+        }
 
         order.Status = status;
         await _uow.SaveChangesAsync();
