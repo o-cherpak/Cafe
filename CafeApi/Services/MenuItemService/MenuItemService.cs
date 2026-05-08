@@ -1,5 +1,7 @@
 ﻿using CafeApi.DTOs;
 using CafeApi.Enums;
+using CafeApi.Exceptions;
+using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Interfaces;
 using CafeApi.Models;
 
@@ -48,7 +50,7 @@ public class MenuItemService : IMenuItemService
         var item = await _uow.MenuItems.GetByIdAsync(id);
 
         if (item is null)
-            throw new KeyNotFoundException("Item not found");
+            throw new MenuItemNotFound($"MenuItem with {id} id not found");
 
         return ToDto(item);
     }
@@ -75,7 +77,7 @@ public class MenuItemService : IMenuItemService
         var item = await _uow.MenuItems.GetByIdAsync(id);
 
         if (item is null)
-            throw new KeyNotFoundException("Item not found");
+            throw new MenuItemNotFound($"MenuItem with {id} id not found");
 
         if (dto.Name is not null) item.Name = dto.Name;
         if (dto.Price is not null) item.Price = dto.Price.Value;
@@ -89,7 +91,7 @@ public class MenuItemService : IMenuItemService
     {
         var item = await _uow.MenuItems.GetByIdAsync(id);
 
-        if (item is null) throw new KeyNotFoundException("Item not found");
+        if (item is null) throw new MenuItemNotFound($"MenuItem with {id} id not found");
         
 
         _uow.MenuItems.Delete(item);
