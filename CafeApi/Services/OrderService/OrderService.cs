@@ -1,5 +1,6 @@
 ﻿using CafeApi.DTOs;
 using CafeApi.Enums;
+using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Interfaces;
 using CafeApi.Models;
 
@@ -56,7 +57,7 @@ public class OrderService : IOrderService
         var order = await _uow.Orders.GetWithItemsAsync(id);
 
         if (order is null)
-            throw new KeyNotFoundException("Order not found");
+            throw new OrderNotFound($"Order with {id} id not found");
 
         return ToDto(order);
     }
@@ -74,7 +75,7 @@ public class OrderService : IOrderService
         var customer = await _uow.Customers.GetByIdAsync(dto.CustomerId);
 
         if (customer is null)
-            throw new KeyNotFoundException("Customer is not found");
+            throw new OrderNotFound($"Order with {dto.CustomerId} customer id not found");
 
         //Order
         var order = new Order
@@ -91,7 +92,7 @@ public class OrderService : IOrderService
             var menuItem = await _uow.MenuItems.GetByIdAsync(itemDto.MenuItemId);
 
             if (menuItem is null)
-                throw new KeyNotFoundException($"Item {itemDto.MenuItemId} not found");
+                throw new MenuItemNotFound($"MenuItem with {itemDto.MenuItemId} id not found");
 
             if (!menuItem.IsAvailable)
                 throw new InvalidOperationException($"{menuItem.Name} is unavailable");
@@ -118,7 +119,7 @@ public class OrderService : IOrderService
         var saved = await _uow.Orders.GetWithItemsAsync(order.Id);
 
         if (saved is null)
-            throw new KeyNotFoundException("Order not found");
+            throw new OrderNotFound($"Order with {order.Id} id not found");
 
         return ToDto(saved);
     }
@@ -128,7 +129,7 @@ public class OrderService : IOrderService
         var order = await _uow.Orders.GetByIdAsync(id);
 
         if (order is null) 
-            throw new KeyNotFoundException("Order not found");
+            throw new OrderNotFound($"Order with {id} id not found");
 
         order.Status = status;
         await _uow.SaveChangesAsync();

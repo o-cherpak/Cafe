@@ -1,6 +1,7 @@
 ﻿using CafeApi.Data;
 using CafeApi.DTOs;
 using CafeApi.Enums;
+using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Models;
 using CafeApi.Repositories;
 using CafeApi.Services.MenuItemService;
@@ -86,7 +87,7 @@ public class MenuItemServiceTests
     [Fact]
     public async Task GetByIdWhenNotFoundTest()
     {
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.GetById(99999));
+        await Assert.ThrowsAsync<MenuItemNotFound>(() => _service.GetById(99999));
     }
 
     [Fact]
