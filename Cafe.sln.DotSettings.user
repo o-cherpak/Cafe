@@ -11,9 +11,7 @@
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=45f1258f_002D8432_002D41ce_002D8848_002Df51c1c22501a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetOrder_ByCustomerIdTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::0A3875D8-956C-40F2-A5F5-4641A9B1DD44::net10.0::CafeTests.IntegrationTests.OrderControllerTests.GetOrder_ByCustomerIdTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Project Location="C:\Users\sasha\RiderProjects\Cafe\CafeTests" Presentation="&amp;lt;CafeTests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
 	

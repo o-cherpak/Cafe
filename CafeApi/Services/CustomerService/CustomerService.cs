@@ -39,8 +39,7 @@ public class CustomerService : ICustomerService
     {
         var customer = await _uow.Customers.GetByIdAsync(id);
 
-        if (customer is null)
-            throw new KeyNotFoundException("Customer not found");
+        if (customer is null) throw new CustomerNotFound($"Customer with {id} id not found");
 
         return ToDto(customer);
     }
@@ -49,8 +48,7 @@ public class CustomerService : ICustomerService
     {
         var customer = await _uow.Customers.GetCustomerByEmailAsync(email);
 
-        if (customer is null)
-            throw new KeyNotFoundException("Customer not found");
+        if (customer is null) throw new CustomerNotFound($"Customer with {email} email not found");
 
         return ToDto(customer);
     }
@@ -60,7 +58,7 @@ public class CustomerService : ICustomerService
         var customer = await _uow.Customers.GetCustomerByEmailAsync(dto.Email);
 
         if (customer is not null)
-            throw new ConflictException("Customer with this email already exists");
+            throw new ConflictException($"Customer with this {dto.Email} email already exists");
 
         var newCustomer = new Customer
         {
@@ -80,8 +78,7 @@ public class CustomerService : ICustomerService
     {
         var item = await _uow.Customers.GetByIdAsync(id);
 
-        if (item is null)
-            throw new KeyNotFoundException("Customer not found");
+        if (item is null) throw new CustomerNotFound($"Customer with {id} id not found");
 
         if (dto.Name is not null) item.Name = dto.Name;
         if (dto.Email is not null) item.Email = dto.Email;
@@ -93,8 +90,7 @@ public class CustomerService : ICustomerService
     {
         var item = await _uow.Customers.GetByIdAsync(id);
 
-        if (item is null)
-            throw new KeyNotFoundException("Customer not found");
+        if (item is null) throw new CustomerNotFound($"Customer with {id} id not found");
 
         _uow.Customers.Delete(item);
         await _uow.SaveChangesAsync();
