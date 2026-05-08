@@ -1,4 +1,5 @@
 ﻿using CafeApi.Exceptions;
+using CafeApi.Exceptions.NotFoundExceptions;
 
 namespace CafeApi.Middleware;
 
@@ -17,7 +18,7 @@ public class ExceptionMiddleware
         {
             await _next(context);
         }
-        catch (KeyNotFoundException ex)
+        catch (NotFoundException ex)
         {
             context.Response.StatusCode = 404;
             context.Response.ContentType = "application/json";
