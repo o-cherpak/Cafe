@@ -1,6 +1,7 @@
 ﻿using CafeApi.Data;
 using CafeApi.DTOs;
 using CafeApi.Enums;
+using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Models;
 using CafeApi.Repositories;
 using CafeApi.Services.OrderService;
@@ -125,6 +126,38 @@ public class OrderServiceTests
     }
 
     [Fact]
+    public async Task GetOrderBy_CustomerIdTest()
+    {
+        await Seed();
+
+        await _service.CreateAsync(new CreateOrderDto(
+            _customerList[0].Id,
+            [
+                new OrderItemDto(_menuList[0].Id, 1),
+                new OrderItemDto(_menuList[1].Id, 3)
+            ]
+        ));
+
+        var result = await _service.GetOrderByCustomerId(_customerList[0].Id);
+
+        result.Should().AllSatisfy(o => { o.CustomerName.Should().Be(_customerList[0].Name); });
+    }
+
+    [Fact]
+    public async Task GetOrderByCustomerId_EmptyTest()
+    {
+        var result = await _service.GetOrderByCustomerId(999999999);
+
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetId_NotFoundTest()
+    {
+        await Assert.ThrowsAsync<OrderNotFound>(() => _service.GetById(1231312));
+    }
+
+    [Fact]
     public async Task Create_AddBonusesTest()
     {
         await Seed();
@@ -163,5 +196,4 @@ public class OrderServiceTests
         updatedOrder.Items.First().Quantity.Should().Be(3);
         updatedOrder.Status.Should().Be(OrderStatus.Cancelled);
     }
-    
 }
