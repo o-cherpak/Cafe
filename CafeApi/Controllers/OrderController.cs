@@ -34,6 +34,14 @@ public class OrderController : ControllerBase
         return Ok(dto);
     }
 
+    [HttpGet("by-customer")]
+    public async Task<ActionResult<OrderResponseDto>> GetOrderByCustomerId([FromQuery] int customerId)
+    {
+        var dto = await _orderService.GetOrderByCustomerId(customerId);
+
+        return Ok(dto);
+    }
+
     [HttpPost]
     public async Task<ActionResult<OrderResponseDto>> Create(CreateOrderDto dto)
     {

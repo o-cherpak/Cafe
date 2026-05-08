@@ -60,6 +60,13 @@ public class OrderService : IOrderService
 
         return ToDto(order);
     }
+    
+    public async Task<IEnumerable<OrderResponseDto>> GetOrderByCustomerId(int id)
+    {
+        var orders = await _uow.Orders.GetOrderByCustomerIdAsync(id);
+
+        return orders.Select(ToDto);
+    }
 
     public async Task<OrderResponseDto> CreateAsync(CreateOrderDto dto)
     {

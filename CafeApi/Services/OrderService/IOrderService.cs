@@ -9,6 +9,7 @@ public interface IOrderService
         (int? customerId, OrderStatus? status);
 
     Task<OrderResponseDto> GetById(int id);
+    Task<IEnumerable<OrderResponseDto>> GetOrderByCustomerId(int id);
     Task Update(int id, OrderStatus status);
     Task<OrderResponseDto> CreateAsync(CreateOrderDto dto);
 }
