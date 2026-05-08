@@ -2,6 +2,7 @@
   postgres:
     image: postgres:16
     restart: always
+    container_name: cafe_db_container
     environment:
       POSTGRES_DB: cafedb
       POSTGRES_USER: ${DB_USER}
