@@ -10,6 +10,8 @@ public class UnitOfWork : IUnitOfWork
     public IMenuItemRepository MenuItems { get; }
     public ICustomerRepository Customers { get; }
     public IOrderRepository Orders { get; }
+    public IPromotionRepository Promotions { get; }
+    public ICustomerPromotionRepository CustomerPromotions { get; }
 
     public UnitOfWork(CafeDbContext db)
     {
@@ -17,6 +19,8 @@ public class UnitOfWork : IUnitOfWork
         MenuItems = new MenuRepository(_db);
         Customers = new CustomerRepository(_db);
         Orders = new OrderRepository(_db);
+        Promotions = new PromotionRepository(_db);
+        CustomerPromotions = new CustomerPromotionRepository(_db);
     }
 
     public void Dispose()
