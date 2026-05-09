@@ -6,5 +6,7 @@ public class Customer {
     public string Email { get; set; } = null!;
     public int BonusPoints { get; set; } = 0;
     public DateTime RegisteredAt { get; set; }
+    
     public ICollection<Order> Orders { get; set; } = [];
+    public ICollection<CustomerPromotion> Promotions { get; set; } = [];
 }

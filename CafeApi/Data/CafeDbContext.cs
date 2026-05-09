@@ -13,6 +13,8 @@ public class CafeDbContext : DbContext
     public DbSet<MenuItem> MenuItems => Set<MenuItem>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<Promotion> Promotions => Set<Promotion>();
+    public DbSet<CustomerPromotion> CustomerPromotions => Set<CustomerPromotion>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -67,5 +69,41 @@ public class CafeDbContext : DbContext
         modelBuilder.Entity<OrderItem>()
             .Property(oi => oi.UnitPrice)
             .HasColumnType("decimal(10,2)");
+
+        //Promotion
+        modelBuilder.Entity<Promotion>()
+            .Property(p => p.Name)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        modelBuilder.Entity<Promotion>()
+            .Property(p => p.DiscountValue)
+            .HasColumnType("decimal(10,2)");
+
+        modelBuilder.Entity<Promotion>()
+            .Property(p => p.Description)
+            .HasMaxLength(400);
+
+        modelBuilder.Entity<Promotion>()
+            .Property(p => p.DiscountType)
+            .HasConversion<string>();
+
+        //CustomerPromotion
+        modelBuilder.Entity<CustomerPromotion>()
+            .HasOne(cp => cp.Customer)
+            .WithMany(c => c.Promotions)
+            .HasForeignKey(cp => cp.CustomerId);
+
+        modelBuilder.Entity<CustomerPromotion>()
+            .HasOne(cp => cp.Promotion)
+            .WithMany(p => p.CustomerPromotions)
+            .HasForeignKey(cp => cp.PromotionId);
+
+        modelBuilder.Entity<CustomerPromotion>()
+            .HasOne(cp => cp.Order)
+            .WithMany()
+            .HasForeignKey(cp => cp.UsedInOrderId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired(false);
     }
 }
