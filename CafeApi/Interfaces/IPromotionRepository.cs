@@ -4,5 +4,5 @@ namespace CafeApi.Interfaces;
 
 public interface IPromotionRepository : IRepository<Promotion>
 {
-    Task<IEnumerable<Promotion>> GetActivePromotions();
+    Task<IEnumerable<Promotion>> GetActivePromotionsAsync();
 }
