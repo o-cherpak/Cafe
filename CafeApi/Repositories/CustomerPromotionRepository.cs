@@ -10,6 +10,23 @@ public class CustomerPromotionRepository : Repository<CustomerPromotion>, ICusto
     public CustomerPromotionRepository(CafeDbContext db) : base(db)
     {
     }
+    
+    public override async Task<CustomerPromotion?> GetByIdAsync(int id)
+    {
+        return await Db.CustomerPromotions
+            .Include(cp => cp.Promotion)
+            .Include(cp => cp.Customer)
+            .FirstOrDefaultAsync(cp => cp.Id == id);
+    }
+
+    public override async Task<IEnumerable<CustomerPromotion>> GetAllAsync()
+    {
+        return await Db.CustomerPromotions
+            .Include(cp => cp.Promotion)
+            .Include(cp => cp.Customer)
+            .AsNoTracking()
+            .ToListAsync();
+    }
 
     public async Task<IEnumerable<CustomerPromotion>> GetByCustomerIdAsync(int customerId)
     {
