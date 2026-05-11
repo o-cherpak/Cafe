@@ -51,7 +51,7 @@ public class PromotionController : ControllerBase
         );
     }
 
-    [HttpPut]
+    [HttpPut("{id}")]
     public async Task<ActionResult<PromotionDto>> Update(
         int id,
         [FromBody] UpdatePromotionDto updatePromotionDto

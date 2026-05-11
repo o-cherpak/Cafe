@@ -5,6 +5,7 @@ using CafeApi.Repositories;
 using CafeApi.Services.CustomerService;
 using CafeApi.Services.MenuItemService;
 using CafeApi.Services.OrderService;
+using CafeApi.Services.PromotionService;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -17,6 +18,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IPromotionService, PromotionService>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<CafeDbContext>(options =>
