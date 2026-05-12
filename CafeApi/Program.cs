@@ -2,6 +2,7 @@ using CafeApi.Data;
 using CafeApi.Interfaces;
 using CafeApi.Middleware;
 using CafeApi.Repositories;
+using CafeApi.Services.CustomerPromotionService;
 using CafeApi.Services.CustomerService;
 using CafeApi.Services.MenuItemService;
 using CafeApi.Services.OrderService;
@@ -19,6 +20,7 @@ builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
+builder.Services.AddScoped<ICustomerPromotionService, CustomerPromotionService>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<CafeDbContext>(options =>

@@ -18,7 +18,7 @@ public class CustomerPromotionService : ICustomerPromotionService
     private CustomerPromotionDto ToDto(CustomerPromotion promotion)
     {
         var promotionDto = new PromotionDto(
-            promotion.Id,
+            promotion.Promotion.Id,
             promotion.Promotion.Name,
             promotion.Promotion.Description,
             promotion.Promotion.BonusCost,
