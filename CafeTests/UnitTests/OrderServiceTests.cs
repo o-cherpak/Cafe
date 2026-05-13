@@ -15,6 +15,7 @@ public class OrderServiceTests
     private readonly OrderService _service;
     private List<Customer> _customerList = new List<Customer>()!;
     private List<MenuItem> _menuList = new List<MenuItem>();
+    private List<Promotion> _promotionList = new List<Promotion>();
 
     public OrderServiceTests()
     {
@@ -51,9 +52,28 @@ public class OrderServiceTests
             new MenuItem { Name = "Cake", Category = ItemCategory.Food, Price = 50 }
         );
 
+        _promotionList.AddRange(
+            new Promotion
+            {
+                Name = "20 Off",
+                BonusCost = 100,
+                DiscountType = DiscountType.FixedAmount,
+                DiscountValue = 20,
+                IsActive = true
+            },
+            new Promotion
+            {
+                Name = "10%",
+                BonusCost = 100,
+                DiscountType = DiscountType.Percentage,
+                DiscountValue = 10,
+                IsActive = true
+            }
+        );
+
         _db.Customers.AddRange(_customerList);
         _db.MenuItems.AddRange(_menuList);
-
+        _db.Promotions.AddRange(_promotionList);
         await _db.SaveChangesAsync();
     }
 
@@ -176,7 +196,7 @@ public class OrderServiceTests
         updatedOrder.Items.First().Quantity.Should().Be(3);
         updatedOrder.Status.Should().Be(OrderStatus.Cancelled);
     }
-    
+
     [Fact]
     public async Task UpdateStatus_AddBonusesTest()
     {
@@ -199,5 +219,102 @@ public class OrderServiceTests
         updatedOrder.Id.Should().Be(order.Id);
         updatedOrder.Items.First().Quantity.Should().Be(3);
         updatedOrder.Status.Should().Be(OrderStatus.Completed);
+    }
+
+    //Promotions
+    [Fact]
+    public async Task CreateWithPercentage_PromoTest()
+    {
+        await Seed();
+
+        _customerList[0].BonusPoints = 500;
+        await _db.SaveChangesAsync();
+
+        var customerPromotion = new CustomerPromotion
+        {
+            CustomerId = _customerList[0].Id,
+            PromotionId = _promotionList[1].Id,
+            PurchasedAt = DateTime.UtcNow,
+            IsUsed = false
+        };
+        _db.CustomerPromotions.Add(customerPromotion);
+        await _db.SaveChangesAsync();
+
+        var dto = new CreateOrderDto(
+            _customerList[0].Id,
+            [new OrderItemDto(_menuList[0].Id, 2)]
+        );
+
+        var result = 
+            await _service.CreateAsync(dto, customerPromotion.PromotionId);
+
+        result.Total.Should().Be(150);
+        result.FinalTotal.Should().Be(135);
+
+        var usedPromo = 
+            await _db.CustomerPromotions.FindAsync(customerPromotion.Id);
+        
+        usedPromo!.IsUsed.Should().BeTrue();
+        usedPromo.UsedAt.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task CreateWithFixed_PromoTest()
+    {
+        await Seed();
+
+        _customerList[0].BonusPoints = 500;
+        await _db.SaveChangesAsync();
+        var promotion = _promotionList[0];
+
+        var customerPromotion = new CustomerPromotion
+        {
+            CustomerId = _customerList[0].Id,
+            PromotionId = promotion.Id,
+            PurchasedAt = DateTime.UtcNow,
+            IsUsed = false
+        };
+        
+        _db.CustomerPromotions.Add(customerPromotion);
+        await _db.SaveChangesAsync();
+        
+        var dto = new CreateOrderDto(
+            _customerList[0].Id,
+            [new OrderItemDto(_menuList[1].Id, 1)]
+        );
+
+        var result = 
+            await _service.CreateAsync(dto, customerPromotion.PromotionId);
+
+        result.Total.Should().Be(50);
+        result.FinalTotal.Should().Be(30);
+    }
+
+    [Fact]
+    public async Task CreateAlreadyUsed_PromoTest()
+    {
+        await Seed();
+
+        var promotion = _promotionList[0];
+
+        var customerPromotion = new CustomerPromotion
+        {
+            CustomerId = _customerList[0].Id,
+            PromotionId = promotion.Id,
+            PurchasedAt = DateTime.UtcNow,
+            IsUsed = true
+        };
+
+        _db.CustomerPromotions.Add(customerPromotion);
+        await _db.SaveChangesAsync();
+
+        var dto = new CreateOrderDto(
+            _customerList[0].Id,
+            [new OrderItemDto(_menuList[0].Id, 1)]
+        );
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CreateAsync(dto, customerPromotion.PromotionId)
+        );
     }
 }

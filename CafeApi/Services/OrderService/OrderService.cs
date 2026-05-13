@@ -154,7 +154,7 @@ public class OrderService : IOrderService
 
     public async Task Update(int id, OrderStatus status)
     {
-        var order = await _uow.Orders.GetWithItemsAsync(id);
+        var order = await _uow.Orders.GetByIdAsync(id);
 
         if (order is null)
             throw new OrderNotFound($"Order with {id} id not found");
