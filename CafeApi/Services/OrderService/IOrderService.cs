@@ -11,5 +11,5 @@ public interface IOrderService
     Task<OrderResponseDto> GetById(int id);
     Task<IEnumerable<OrderResponseDto>> GetOrderByCustomerId(int id);
     Task Update(int id, OrderStatus status);
-    Task<OrderResponseDto> CreateAsync(CreateOrderDto dto);
+    Task<OrderResponseDto> CreateAsync(CreateOrderDto dto,  int? promotionId = null);
 }

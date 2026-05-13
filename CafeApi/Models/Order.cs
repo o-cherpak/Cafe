@@ -9,5 +9,6 @@ public class Order
     public Customer Customer { get; set; } = null!;
     public OrderStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
+    public decimal FinalTotal { get; set; }
     public ICollection<OrderItem> Items { get; set; } = [];
 }

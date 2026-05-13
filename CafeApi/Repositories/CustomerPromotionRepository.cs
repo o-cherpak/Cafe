@@ -10,7 +10,7 @@ public class CustomerPromotionRepository : Repository<CustomerPromotion>, ICusto
     public CustomerPromotionRepository(CafeDbContext db) : base(db)
     {
     }
-    
+
     public override async Task<CustomerPromotion?> GetByIdAsync(int id)
     {
         return await Db.CustomerPromotions
@@ -38,8 +38,10 @@ public class CustomerPromotionRepository : Repository<CustomerPromotion>, ICusto
 
     public async Task<CustomerPromotion?> GetByCustomerAndPromotionAsync(int customerId, int promotionId)
     {
-        return await Db.CustomerPromotions.FirstOrDefaultAsync(p =>
-            p.CustomerId == customerId && p.PromotionId == promotionId);
+        return await Db.CustomerPromotions
+            .Include(cp => cp.Promotion)
+            .FirstOrDefaultAsync(p =>
+                p.CustomerId == customerId && p.PromotionId == promotionId);
     }
 
     public async Task<CustomerPromotion?> GetByOrderAsync(int orderId)
