@@ -15,6 +15,7 @@ public class CafeDbContext : DbContext
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<Promotion> Promotions => Set<Promotion>();
     public DbSet<CustomerPromotion> CustomerPromotions => Set<CustomerPromotion>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -105,5 +106,19 @@ public class CafeDbContext : DbContext
             .HasForeignKey(cp => cp.UsedInOrderId)
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired(false);
+
+        //User
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<User>()
+            .Property(u => u.Email)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        modelBuilder.Entity<User>()
+            .Property(u => u.Role)
+            .HasConversion<string>();
     }
 }
