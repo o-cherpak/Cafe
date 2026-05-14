@@ -1,0 +1,20 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  api:
+    build:
+      context: "C:\\Users\\sasha\\RiderProjects\\Cafe\\CafeApi"
+      dockerfile: "Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net10.0/CafeApi.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "cafeapi:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\sasha\\RiderProjects\\Cafe\\CafeApi:/app:rw"
+    - "C:\\Users\\sasha\\RiderProjects\\Cafe:/src:rw"
+    - "C:\\Users\\sasha\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"
