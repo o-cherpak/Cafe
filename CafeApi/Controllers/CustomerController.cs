@@ -1,10 +1,11 @@
 ﻿using CafeApi.DTOs;
-using CafeApi.Interfaces;
 using CafeApi.Services.CustomerService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CafeApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CustomerController : ControllerBase
@@ -16,6 +17,7 @@ public class CustomerController : ControllerBase
         _customerService = customerService;
     }
 
+    [Authorize(Roles = "Admin,Barista")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAll()
     {
@@ -24,6 +26,7 @@ public class CustomerController : ControllerBase
         return Ok(listDto);
     }
 
+    [Authorize(Roles = "Admin,Barista,Customer")]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<CustomerDto>> GetById(int id)
     {
@@ -32,6 +35,7 @@ public class CustomerController : ControllerBase
         return Ok(dto);
     }
 
+    [Authorize(Roles = "Admin,Barista,Customer")]
     [HttpGet("by-email")]
     public async Task<ActionResult<CustomerDto>> GetByEmail([FromQuery] string email)
     {
@@ -39,6 +43,7 @@ public class CustomerController : ControllerBase
         return Ok(dto);
     }
 
+    [Authorize(Roles = "Admin,Barista")]
     [HttpPost]
     public async Task<ActionResult<CustomerDto>> Create(CreateCustomerDto dto)
     {
@@ -51,6 +56,7 @@ public class CustomerController : ControllerBase
         );
     }
 
+    [Authorize(Roles = "Admin,Barista,Customer")]
     [HttpPut("{id}")]
     public async Task<ActionResult> Update(int id, UpdateCustomerDto dto)
     {
@@ -59,7 +65,8 @@ public class CustomerController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {
         await _customerService.Delete(id);

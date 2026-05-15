@@ -1,9 +1,11 @@
 ﻿using CafeApi.DTOs;
 using CafeApi.Services.CustomerPromotionService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CafeApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CustomerPromotionController : ControllerBase
@@ -15,6 +17,7 @@ public class CustomerPromotionController : ControllerBase
         _service = service;
     }
 
+    [Authorize(Roles = "Admin,Barista")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CustomerPromotionDto>>> GetAll()
     {
@@ -23,6 +26,7 @@ public class CustomerPromotionController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "Admin,Barista,Customer")]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<CustomerPromotionDto>> GetById(int id)
     {
@@ -31,6 +35,7 @@ public class CustomerPromotionController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "Admin,Barista,Customer")]
     [HttpGet("by-customer")]
     public async Task<ActionResult<IEnumerable<CustomerPromotionDto>>>
         GetByCustomerIdAsync([FromQuery] int customerId)
@@ -41,6 +46,7 @@ public class CustomerPromotionController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "Admin,Barista,Customer")]
     [HttpGet("by-customer-promotion")]
     public async Task<ActionResult<CustomerPromotionDto>>
         GetByCustomerAndPromotionAsync(
@@ -53,6 +59,7 @@ public class CustomerPromotionController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "Admin,Barista,Customer")]
     [HttpGet("by-order")]
     public async Task<ActionResult<IEnumerable<CustomerPromotionDto>>>
         GetByOrderIdAsync([FromQuery] int orderId)
@@ -62,6 +69,7 @@ public class CustomerPromotionController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "Admin,Barista,Customer")]
     [HttpPost]
     public async Task<ActionResult<CustomerPromotionDto>>
         BuyPromotion(BuyPromotionDto buyPromotionDto)
@@ -75,6 +83,7 @@ public class CustomerPromotionController : ControllerBase
         );
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {

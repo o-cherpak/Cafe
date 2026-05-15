@@ -1,10 +1,12 @@
 ﻿using CafeApi.DTOs;
 using CafeApi.Enums;
 using CafeApi.Services.OrderService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CafeApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class OrderController : ControllerBase
@@ -16,6 +18,7 @@ public class OrderController : ControllerBase
         _orderService = orderService;
     }
 
+    [Authorize(Roles = "Admin,Barista")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<OrderResponseDto>>> GetAll(
         [FromQuery] int? customerId,
@@ -26,6 +29,7 @@ public class OrderController : ControllerBase
         return Ok(listDto);
     }
 
+    [Authorize(Roles = "Admin,Barista,Customer")]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<OrderResponseDto>> GetById(int id)
     {
@@ -34,6 +38,7 @@ public class OrderController : ControllerBase
         return Ok(dto);
     }
 
+    [Authorize(Roles = "Admin,Barista,Customer")]
     [HttpGet("by-customer")]
     public async Task<ActionResult<OrderResponseDto>> GetOrderByCustomerId([FromQuery] int customerId)
     {
@@ -42,6 +47,7 @@ public class OrderController : ControllerBase
         return Ok(dto);
     }
 
+    [Authorize(Roles = "Admin,Barista,Customer")]
     [HttpPost]
     public async Task<ActionResult<OrderResponseDto>> Create(CreateOrderDto dto)
     {
@@ -49,6 +55,7 @@ public class OrderController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
+    [Authorize(Roles = "Admin,Barista")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> Update(int id, [FromBody] OrderStatus status)
     {

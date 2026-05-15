@@ -1,10 +1,12 @@
 ﻿using CafeApi.DTOs;
 using CafeApi.Interfaces;
 using CafeApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CafeApi.Controllers;
 
+[AllowAnonymous]
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase

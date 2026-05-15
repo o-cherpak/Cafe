@@ -1,9 +1,11 @@
 ﻿using CafeApi.DTOs;
 using CafeApi.Services.PromotionService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CafeApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class PromotionController : ControllerBase
@@ -15,6 +17,7 @@ public class PromotionController : ControllerBase
         _promotionService = promotionService;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PromotionDto>>> GetAll()
     {
@@ -23,6 +26,7 @@ public class PromotionController : ControllerBase
         return Ok(result);
     }
 
+    [AllowAnonymous]
     [HttpGet("active")]
     public async Task<ActionResult<IEnumerable<PromotionDto>>> GetActivePromotions()
     {
@@ -31,6 +35,7 @@ public class PromotionController : ControllerBase
         return Ok(result);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<PromotionDto>> GetById(int id)
     {
@@ -39,6 +44,7 @@ public class PromotionController : ControllerBase
         return Ok(dto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<PromotionDto>> Create(CreatePromotionDto createDto)
     {
@@ -51,6 +57,7 @@ public class PromotionController : ControllerBase
         );
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<ActionResult<PromotionDto>> Update(
         int id,

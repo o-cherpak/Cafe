@@ -2,10 +2,12 @@
 using CafeApi.Enums;
 using CafeApi.Interfaces;
 using CafeApi.Services.MenuItemService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CafeApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class MenuItemController : ControllerBase
@@ -20,6 +22,7 @@ public class MenuItemController : ControllerBase
         _menuItemService = menuItemService;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MenuItemDto>>> GetAll
     (
@@ -31,6 +34,7 @@ public class MenuItemController : ControllerBase
         return Ok(result);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<MenuItemDto>> GetById(int id)
     {
@@ -39,6 +43,7 @@ public class MenuItemController : ControllerBase
         return Ok(dto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<MenuItemDto>> Create(CreateMenuItemDto dto)
     {
@@ -51,6 +56,7 @@ public class MenuItemController : ControllerBase
         );
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<ActionResult> Update(int id, UpdateMenuItemDto dto)
     {
@@ -59,6 +65,7 @@ public class MenuItemController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
