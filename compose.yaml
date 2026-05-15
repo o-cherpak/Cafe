@@ -13,7 +13,7 @@
       - "5440:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    
+
   api:
     build:
       context: .
@@ -22,11 +22,15 @@
       - "5285:8080"
     depends_on:
       - postgres
+    env_file:
+      - .env
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Default=Host=postgres;Port=5432;Database=cafedb;Username=${DB_USER};Password=${DB_PASSWORD}
-    
+      - Jwt__Secret=${JWT_KEY}
+      - Jwt__Issuer=CafeApi
+      - Jwt__Audience=CafeClient
+      - Jwt__ExpiresInMinutes=60
+
 volumes:
   postgres_data:
-    
-    
