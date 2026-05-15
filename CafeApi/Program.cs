@@ -3,6 +3,7 @@ using CafeApi.Data;
 using CafeApi.Interfaces;
 using CafeApi.Middleware;
 using CafeApi.Repositories;
+using CafeApi.Services;
 using CafeApi.Services.CustomerPromotionService;
 using CafeApi.Services.CustomerService;
 using CafeApi.Services.MenuItemService;
@@ -24,6 +25,7 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<ICustomerPromotionService, CustomerPromotionService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<CafeDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));

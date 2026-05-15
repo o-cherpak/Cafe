@@ -2,8 +2,8 @@
 services:
   api:
     build:
-      context: "C:\\Users\\sasha\\RiderProjects\\Cafe\\CafeApi"
-      dockerfile: "Dockerfile"
+      context: "C:\\Users\\sasha\\RiderProjects\\Cafe"
+      dockerfile: "CafeApi/Dockerfile"
       target: "base"
     command: []
     entrypoint:
@@ -16,5 +16,6 @@ services:
     volumes:
     - "C:\\Users\\sasha\\RiderProjects\\Cafe\\CafeApi:/app:rw"
     - "C:\\Users\\sasha\\RiderProjects\\Cafe:/src:rw"
+    - "C:\\Users\\sasha\\AppData\\Roaming\\Microsoft\\UserSecrets:/home/app/.microsoft/usersecrets"
     - "C:\\Users\\sasha\\.nuget\\packages:/home/app/.nuget/packages"
     working_dir: "/app"
