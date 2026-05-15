@@ -21,7 +21,7 @@ public class AuthService : IAuthService
         _db = db;
     }
 
-    public string CreateToken(User user)
+    private string CreateToken(User user)
     {
         var claims = new List<Claim>
         {
@@ -34,7 +34,7 @@ public class AuthService : IAuthService
                      ?? throw new InvalidOperationException("JWT Secret not found in configuration.");
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
