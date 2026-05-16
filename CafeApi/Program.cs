@@ -57,10 +57,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("front", policy =>
     {
         policy
-            .WithOrigins(
-                "http://localhost:5173",
-                "https://cafe-api-c5dw.onrender.com"
-            )
+            .AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
