@@ -1,5 +1,4 @@
 ﻿using CafeApi.DTOs;
-using CafeApi.Interfaces;
 using CafeApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,12 +10,10 @@ namespace CafeApi.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly IUnitOfWork _uow;
     private readonly IAuthService _authService;
 
-    public AuthController(IUnitOfWork uow, IAuthService authService)
+    public AuthController(IAuthService authService)
     {
-        _uow = uow;
         _authService = authService;
     }
 
