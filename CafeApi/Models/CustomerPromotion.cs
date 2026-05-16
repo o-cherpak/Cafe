@@ -14,5 +14,5 @@ public class CustomerPromotion
 
     public bool IsUsed { get; set; }
     public int? UsedInOrderId { get; set; }
-    public Order? Order { get; set; } = null!;
+    public Order? Order { get; set; }
 }

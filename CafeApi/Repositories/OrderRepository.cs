@@ -1,5 +1,4 @@
 ﻿using CafeApi.Data;
-using CafeApi.Enums;
 using CafeApi.Interfaces;
 using CafeApi.Models;
 using Microsoft.EntityFrameworkCore;

@@ -1,5 +1,4 @@
 ﻿using CafeApi.DTOs;
-using CafeApi.Enums;
 
 namespace CafeApi.Services.CustomerService;
 

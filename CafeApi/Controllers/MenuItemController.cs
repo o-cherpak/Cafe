@@ -1,6 +1,5 @@
 ﻿using CafeApi.DTOs;
 using CafeApi.Enums;
-using CafeApi.Interfaces;
 using CafeApi.Services.MenuItemService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

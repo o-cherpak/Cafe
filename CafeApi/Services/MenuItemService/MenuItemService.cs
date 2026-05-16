@@ -1,6 +1,5 @@
 ﻿using CafeApi.DTOs;
 using CafeApi.Enums;
-using CafeApi.Exceptions;
 using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Interfaces;
 using CafeApi.Models;
