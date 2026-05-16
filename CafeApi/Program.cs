@@ -51,6 +51,21 @@ builder.Services.AddAuthentication(options =>
     });
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("front", policy =>
+    {
+        policy
+            .WithOrigins(
+                "http://localhost:5173",
+                "https://cafe-api-c5dw.onrender.com"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -67,7 +82,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
-
+app.UseCors("front");
 app.UseAuthentication();
 app.UseAuthorization();
 
