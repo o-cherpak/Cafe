@@ -15,14 +15,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
+var builder = WebApplication.CreateBuilder(args);
+
 Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
     .WriteTo.Console()
     .WriteTo.File("Logs/cafe-.txt", rollingInterval: RollingInterval.Day,
         retainedFileCountLimit: 5,
         fileSizeLimitBytes: 10_000_000)
     .CreateLogger();
-
-var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog();
 
