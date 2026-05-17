@@ -13,8 +13,18 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/cafe-.txt", rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 5,
+        fileSizeLimitBytes: 10_000_000)
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 
@@ -68,7 +78,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<CafeDbContext>();
-    
+
     if (db.Database.IsNpgsql())
     {
         db.Database.Migrate();
