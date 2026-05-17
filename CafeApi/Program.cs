@@ -92,6 +92,14 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+else
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options.WithBaseServerUrl("https://cafe-api-c5dw.onrender.com");
+    });
+}
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseSerilogRequestLogging();
