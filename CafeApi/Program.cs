@@ -37,7 +37,6 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<ICustomerPromotionService, CustomerPromotionService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddOpenApi();
 builder.Services.AddDbContext<CafeDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
