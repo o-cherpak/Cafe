@@ -1,4 +1,5 @@
 ﻿using CafeApi.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 options.UseInMemoryDatabase("TestDb");
                 options.UseInternalServiceProvider(serviceProvider);
             });
+            
+            services.AddSingleton<IAuthorizationHandler, AllowAnonymousAuth>();
 
         });
     }
