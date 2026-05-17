@@ -10,9 +10,9 @@ using CafeApi.Services.MenuItemService;
 using CafeApi.Services.OrderService;
 using CafeApi.Services.PromotionService;
 using Microsoft.EntityFrameworkCore;
-using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -87,19 +87,18 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+builder.Services.AddOpenApi(options =>
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference();
-}
-else
-{
-    app.MapOpenApi();
-    app.MapScalarApiReference(options =>
+    var serverUrl = builder.Configuration["ApiServerUrl"];
+    if (!string.IsNullOrEmpty(serverUrl))
     {
-        options.WithBaseServerUrl("https://cafe-api-c5dw.onrender.com");
-    });
-}
+        options.AddDocumentTransformer((document, context, ct) =>
+        {
+            document.Servers = [new OpenApiServer { Url = serverUrl }];
+            return Task.CompletedTask;
+        });
+    }
+});
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseSerilogRequestLogging();
