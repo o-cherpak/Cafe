@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Scalar.AspNetCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -73,6 +74,19 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddOpenApi(options =>
+{
+    var serverUrl = builder.Configuration["ApiServerUrl"];
+    if (!string.IsNullOrEmpty(serverUrl))
+    {
+        options.AddDocumentTransformer((document, context, ct) =>
+        {
+            document.Servers = [new OpenApiServer { Url = serverUrl }];
+            return Task.CompletedTask;
+        });
+    }
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -86,18 +100,11 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-builder.Services.AddOpenApi(options =>
+if (app.Environment.IsDevelopment())
 {
-    var serverUrl = builder.Configuration["ApiServerUrl"];
-    if (!string.IsNullOrEmpty(serverUrl))
-    {
-        options.AddDocumentTransformer((document, context, ct) =>
-        {
-            document.Servers = [new OpenApiServer { Url = serverUrl }];
-            return Task.CompletedTask;
-        });
-    }
-});
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseSerilogRequestLogging();
