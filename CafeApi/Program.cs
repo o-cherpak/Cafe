@@ -93,6 +93,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseSerilogRequestLogging();
+
 app.UseCors("front");
 app.UseAuthentication();
 app.UseAuthorization();
