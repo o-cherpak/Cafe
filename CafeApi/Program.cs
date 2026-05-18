@@ -76,15 +76,15 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddOpenApi(options =>
 {
-    var serverUrl = builder.Configuration["ApiServerUrl"];
-    if (!string.IsNullOrEmpty(serverUrl))
+    options.AddDocumentTransformer((document, context, ct) =>
     {
-        options.AddDocumentTransformer((document, context, ct) =>
+        var serverUrl = builder.Configuration["ApiServerUrl"];
+        if (!string.IsNullOrEmpty(serverUrl))
         {
             document.Servers = [new OpenApiServer { Url = serverUrl }];
-            return Task.CompletedTask;
-        });
-    }
+        }
+        return Task.CompletedTask;
+    });
 });
 
 var app = builder.Build();
