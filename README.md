@@ -1,4 +1,4 @@
-Cafe API Documentation - [Cafe Web api doc.pdf](https://github.com/user-attachments/files/27930889/Cafe.Web.api.doc.pdf)
+Cafe API Documentation
 
 
 Fully functional REST API cafe ordering system with a customer kiosk flow, staff management panel, a bonus points economy, and a promotion system with two discount types. The API is live, documented, and ready to be extended with a React frontend. This project was built as a learning exercise while studying .NET backend development. The goal was to go beyond simple CRUD and build something that resembles a real-world system - with proper layering, authentication, business logic, and deployment. Over the course of the project I learned and applied: clean architecture with Repository and Unit of Work patterns, Entity Framework Core with Code First migrations and Fluent API configuration, JWT authentication with role-based authorization, Docker and Docker Compose for containerization, automated testing with xUnit covering both unit and integration scenarios, and deploying a containerized .NET application with PostgreSQL to a cloud platform.
