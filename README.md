@@ -107,5 +107,4 @@ Fully functional REST API cafe ordering system with a customer kiosk flow, staff
    ```bash
    docker compose up --build
 API Access Points: <br>
-API Base URL: http://localhost:5285
-Scalar Docs: http://localhost:5285/scalar/v1
+Scalar Docs: https://cafe-api-c5dw.onrender.com/scalar/v1
