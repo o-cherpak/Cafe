@@ -106,5 +106,8 @@ Fully functional REST API cafe ordering system with a customer kiosk flow, staff
 3. Run Docker Compose
    ```bash
    docker compose up --build
-API Access Points: <br>
+
+## 🚀 Try online in scalar
 Scalar Docs: https://cafe-api-c5dw.onrender.com/scalar/v1
+### You can try without any auth token:
+`GET` | `/api/menuitem` | Public | Get all items
