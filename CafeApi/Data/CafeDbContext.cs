@@ -109,6 +109,13 @@ public class CafeDbContext : DbContext
 
         //User
         modelBuilder.Entity<User>()
+            .HasOne(u => u.Customer)
+            .WithOne()
+            .HasForeignKey<User>(u => u.CustomerId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.SetNull);
+        
+        modelBuilder.Entity<User>()
             .HasIndex(u => u.Email)
             .IsUnique();
 
