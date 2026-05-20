@@ -2,7 +2,7 @@
 
 namespace CafeApi.DTOs;
 
-public record RegisterDto(string Email, string Password, UserRole Role);
+public record RegisterDto(string? Name, string Email, string Password, UserRole Role);
 
 public record LoginDto(string Email, string Password);
 
