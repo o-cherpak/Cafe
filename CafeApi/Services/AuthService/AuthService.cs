@@ -3,8 +3,10 @@ using System.Security.Claims;
 using System.Text;
 using CafeApi.Data;
 using CafeApi.DTOs;
+using CafeApi.Enums;
 using CafeApi.Exceptions;
 using CafeApi.Models;
+using CafeApi.Services.CustomerService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,20 +16,27 @@ public class AuthService : IAuthService
 {
     private readonly IConfiguration _configuration;
     private readonly CafeDbContext _db;
+    private readonly ICustomerService _customerService;
 
-    public AuthService(IConfiguration configuration, CafeDbContext db)
+    public AuthService(
+        IConfiguration configuration,
+        CafeDbContext db,
+        ICustomerService customerService
+    )
     {
         _configuration = configuration;
         _db = db;
+        _customerService = customerService;
     }
 
     private string CreateToken(User user)
     {
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role.ToString())
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Email, user.Email),
+            new(ClaimTypes.Role, user.Role.ToString()),
+            new ("customerId", user.CustomerId?.ToString() ?? "")
         };
 
         var secret = _configuration["Jwt:Secret"]
@@ -54,15 +63,27 @@ public class AuthService : IAuthService
     public async Task<AuthResponseDto> Register(RegisterDto dto)
     {
         var existing = await _db.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
-
         if (existing is not null)
             throw new ConflictException("User with this email already exists");
+
+        int? customerId = null;
+
+        if (dto.Role == UserRole.Customer)
+        {
+            string name = dto.Name ?? dto.Email;
+            
+            var customerDto = await _customerService.Create(
+                new CreateCustomerDto(name, dto.Email)
+            );
+            customerId = customerDto.Id;
+        }
 
         var user = new User
         {
             Email = dto.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-            Role = dto.Role
+            Role = dto.Role,
+            CustomerId = customerId
         };
 
         _db.Users.Add(user);
@@ -79,7 +100,7 @@ public class AuthService : IAuthService
         {
             throw new UnauthorizedException("Invalid email or password");
         }
-        
+
         return new AuthResponseDto(CreateToken(user), user.Email, user.Role);
     }
 }
