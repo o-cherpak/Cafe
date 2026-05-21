@@ -1,4 +1,5 @@
 ﻿using CafeApi.DTOs;
+using CafeApi.Helpers;
 using CafeApi.Services.CustomerService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,11 @@ public class CustomerController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<CustomerDto>> GetById(int id)
     {
+        if (!User.HasAccessToCustomer(id))
+        {
+            return Forbid("You dont have enough permissions");
+        }
+        
         var dto = await _customerService.GetById(id);
 
         return Ok(dto);

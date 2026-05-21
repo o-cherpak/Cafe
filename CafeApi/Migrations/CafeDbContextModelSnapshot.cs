@@ -224,7 +224,7 @@ namespace CafeApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Email")
@@ -312,8 +312,7 @@ namespace CafeApi.Migrations
                     b.HasOne("CafeApi.Models.Customer", "Customer")
                         .WithOne()
                         .HasForeignKey("CafeApi.Models.User", "CustomerId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Customer");
                 });
