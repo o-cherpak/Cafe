@@ -6,4 +6,4 @@ public record RegisterDto(string? Name, string Email, string Password, UserRole 
 
 public record LoginDto(string Email, string Password);
 
-public record AuthResponseDto(string Token, string Email, UserRole Role);
+public record AuthResponseDto(string Token, string Email, UserRole Role, int? CustomerId);

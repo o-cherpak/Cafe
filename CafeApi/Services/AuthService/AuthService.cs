@@ -89,7 +89,7 @@ public class AuthService : IAuthService
         _db.Users.Add(user);
         await _db.SaveChangesAsync();
 
-        return new AuthResponseDto(CreateToken(user), user.Email, user.Role);
+        return new AuthResponseDto(CreateToken(user), user.Email, user.Role, customerId);
     }
 
     public async Task<AuthResponseDto> Login(LoginDto dto)
@@ -101,6 +101,6 @@ public class AuthService : IAuthService
             throw new UnauthorizedException("Invalid email or password");
         }
 
-        return new AuthResponseDto(CreateToken(user), user.Email, user.Role);
+        return new AuthResponseDto(CreateToken(user), user.Email, user.Role, user.CustomerId);
     }
 }
