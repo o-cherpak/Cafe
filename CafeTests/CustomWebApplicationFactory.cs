@@ -1,4 +1,5 @@
 ﻿using CafeApi.Data;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -19,7 +20,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
             if (descriptor != null)
                 services.Remove(descriptor);
-            
+
             var dbConnectionDescriptor = services.SingleOrDefault(d =>
                 d.ServiceType == typeof(System.Data.Common.DbConnection));
 
@@ -35,9 +36,14 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 options.UseInMemoryDatabase("TestDb");
                 options.UseInternalServiceProvider(serviceProvider);
             });
-            
-            services.AddSingleton<IAuthorizationHandler, AllowAnonymousAuth>();
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "TestScheme";
+                options.DefaultChallengeScheme = "TestScheme";
+            }).AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
+                "TestScheme", options => { }
+            );
         });
     }
 }
