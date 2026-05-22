@@ -1,4 +1,6 @@
 ﻿using CafeApi.DTOs;
+using CafeApi.Exceptions;
+using CafeApi.Helpers;
 using CafeApi.Services.CustomerPromotionService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +34,11 @@ public class CustomerPromotionController : ControllerBase
     {
         var result = await _service.GetById(id);
 
+        if (!User.HasAccessToCustomer(result.CustomerId))
+        {
+            throw new PermissionException("You dont have enough permissions");
+        }
+
         return Ok(result);
     }
 
@@ -40,6 +47,11 @@ public class CustomerPromotionController : ControllerBase
     public async Task<ActionResult<IEnumerable<CustomerPromotionDto>>>
         GetByCustomerIdAsync([FromQuery] int customerId)
     {
+        if (!User.HasAccessToCustomer(customerId))
+        {
+            throw new PermissionException("You dont have enough permissions");
+        }
+
         var result =
             await _service.GetByCustomerIdAsync(customerId);
 
@@ -48,11 +60,15 @@ public class CustomerPromotionController : ControllerBase
 
     [Authorize(Roles = "Admin,Barista,Customer")]
     [HttpGet("by-customer-promotion")]
-    public async Task<ActionResult<CustomerPromotionDto>>
-        GetByCustomerAndPromotionAsync(
-            [FromQuery] int customerId, [FromQuery] int promotionId
-        )
+    public async Task<ActionResult<CustomerPromotionDto>> GetByCustomerAndPromotionAsync
+    (
+        [FromQuery] int customerId, [FromQuery] int promotionId)
     {
+        if (!User.HasAccessToCustomer(customerId))
+        {
+            throw new PermissionException("You dont have enough permissions");
+        }
+
         var result =
             await _service.GetByCustomerAndPromotionAsync(customerId, promotionId);
 
@@ -61,10 +77,16 @@ public class CustomerPromotionController : ControllerBase
 
     [Authorize(Roles = "Admin,Barista,Customer")]
     [HttpGet("by-order")]
-    public async Task<ActionResult<IEnumerable<CustomerPromotionDto>>>
-        GetByOrderIdAsync([FromQuery] int orderId)
+    public async Task<ActionResult<IEnumerable<CustomerPromotionDto>>> GetByOrderIdAsync
+    (
+        [FromQuery] int orderId
+    )
     {
         var result = await _service.GetByOrderAsync(orderId);
+        if (!User.HasAccessToCustomer(result.CustomerId))
+        {
+            throw new PermissionException("You dont have enough permissions");
+        }
 
         return Ok(result);
     }
@@ -74,6 +96,11 @@ public class CustomerPromotionController : ControllerBase
     public async Task<ActionResult<CustomerPromotionDto>>
         BuyPromotion(BuyPromotionDto buyPromotionDto)
     {
+        if (!User.HasAccessToCustomer(buyPromotionDto.CustomerId))
+        {
+            throw new PermissionException("You dont have enough permissions");
+        }
+        
         var dto = await _service.BuyPromotion(buyPromotionDto);
 
         return CreatedAtAction(
