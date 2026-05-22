@@ -1,4 +1,5 @@
 ﻿using CafeApi.DTOs;
+using CafeApi.Exceptions;
 using CafeApi.Helpers;
 using CafeApi.Services.CustomerService;
 using Microsoft.AspNetCore.Authorization;
@@ -33,11 +34,10 @@ public class CustomerController : ControllerBase
     {
         if (!User.HasAccessToCustomer(id))
         {
-            return Forbid("You dont have enough permissions");
+            throw new PermissionException("You dont have enough permissions");
         }
         
         var dto = await _customerService.GetById(id);
-
         return Ok(dto);
     }
 
@@ -46,6 +46,12 @@ public class CustomerController : ControllerBase
     public async Task<ActionResult<CustomerDto>> GetByEmail([FromQuery] string email)
     {
         var dto = await _customerService.GetByEmail(email);
+
+        if (!User.HasAccessToCustomer(dto.Id))
+        {
+            throw new PermissionException("You dont have enough permissions");
+        }
+
         return Ok(dto);
     }
 
@@ -66,8 +72,12 @@ public class CustomerController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult> Update(int id, UpdateCustomerDto dto)
     {
+        if (!User.HasAccessToCustomer(id))
+        {
+            throw new PermissionException("You dont have enough permissions");
+        }
+        
         await _customerService.Update(id, dto);
-
         return NoContent();
     }
 
