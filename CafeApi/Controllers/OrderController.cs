@@ -1,5 +1,7 @@
 ﻿using CafeApi.DTOs;
 using CafeApi.Enums;
+using CafeApi.Exceptions;
+using CafeApi.Helpers;
 using CafeApi.Services.OrderService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +22,8 @@ public class OrderController : ControllerBase
 
     [Authorize(Roles = "Admin,Barista")]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<OrderResponseDto>>> GetAll(
+    public async Task<ActionResult<IEnumerable<OrderResponseDto>>> GetAll
+    (
         [FromQuery] int? customerId,
         [FromQuery] OrderStatus? status
     )
@@ -35,6 +38,11 @@ public class OrderController : ControllerBase
     {
         var dto = await _orderService.GetById(id);
 
+        if (!User.HasAccessToCustomer(dto.CustomerId))
+        {
+            throw new PermissionException("You dont have enough permissions");
+        }
+        
         return Ok(dto);
     }
 
@@ -42,6 +50,11 @@ public class OrderController : ControllerBase
     [HttpGet("by-customer")]
     public async Task<ActionResult<OrderResponseDto>> GetOrderByCustomerId([FromQuery] int customerId)
     {
+        if (!User.HasAccessToCustomer(customerId))
+        {
+            throw new PermissionException("You dont have enough permissions");
+        }
+        
         var dto = await _orderService.GetOrderByCustomerId(customerId);
 
         return Ok(dto);
@@ -51,6 +64,11 @@ public class OrderController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<OrderResponseDto>> Create(CreateOrderDto dto)
     {
+        if (!User.HasAccessToCustomer(dto.CustomerId))
+        {
+            throw new PermissionException("You dont have enough permissions");
+        }
+        
         var result = await _orderService.CreateAsync(dto);
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
