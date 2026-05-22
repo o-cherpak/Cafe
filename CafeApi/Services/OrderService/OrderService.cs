@@ -18,7 +18,9 @@ public class OrderService : IOrderService
     private OrderResponseDto ToDto(Order order)
     {
         var dto = new OrderResponseDto(
-            order.Id, order.Customer.Name,
+            order.Id, 
+            order.Customer.Name,
+            order.CustomerId,
             order.Status,
             order.CreatedAt,
             Total: order.Items.Sum(i => i.UnitPrice * i.Quantity),

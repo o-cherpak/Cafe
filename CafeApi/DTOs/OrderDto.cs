@@ -7,6 +7,7 @@ public record CreateOrderDto(int CustomerId, List<OrderItemDto> Items);
 public record OrderResponseDto(
     int Id,
     string CustomerName,
+    int CustomerId,
     OrderStatus Status,
     DateTime CreatedAt,
     decimal Total,
