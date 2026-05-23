@@ -150,6 +150,29 @@ public class CustomerServiceTests
             )
         );
     }
+    
+    [Fact]
+    public async Task Validator_UpdateInvalidEmailTest()
+    {
+        var validator = new UpdateCustomerValidator();
+        var dto = new UpdateCustomerDto(null, "email");
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Email");
+    }
+
+    [Fact]
+    public async Task Validator_UpdateNoErrorsTest()
+    {
+        var validator = new UpdateCustomerValidator();
+        var dto = new UpdateCustomerDto("Alex", null);
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeTrue();
+    }
 
     [Fact]
     public async Task DeleteTest()
