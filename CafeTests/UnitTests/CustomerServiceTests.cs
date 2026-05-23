@@ -4,6 +4,7 @@ using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Models;
 using CafeApi.Repositories;
 using CafeApi.Services.CustomerService;
+using CafeApi.Validators.CustomerValidators;
 using FluentAssertions;
 
 namespace CafeTests.UnitTests;
@@ -94,6 +95,41 @@ public class CustomerServiceTests
         _db.Customers.Should().HaveCount(2);
         _db.Customers.Should().ContainSingle(c => c.Email == dto.Email && c.Name == dto.Name);
     }
+    
+    [Fact]
+    public async Task Validator_CreateCustomer_EmptyName_ReturnsError()
+    {
+        var validator = new CreateCustomerValidator();
+        var dto = new CreateCustomerDto("", "john@gmail.com");
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Name");
+    }
+
+    [Fact]
+    public async Task Validator_CreateInvalidEmailTest()
+    {
+        var validator = new CreateCustomerValidator();
+        var dto = new CreateCustomerDto("John", "email");
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Email");
+    }
+
+    [Fact]
+    public async Task Validator_CreateNoErrorsTest()
+    {
+        var validator = new CreateCustomerValidator();
+        var dto = new CreateCustomerDto("Alex", "alex@gmail.com");
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeTrue();
+    }
 
     [Fact]
     public async Task UpdateTest()
@@ -113,6 +149,29 @@ public class CustomerServiceTests
                 1, "Czapka", "emailC.com", 0
             )
         );
+    }
+    
+    [Fact]
+    public async Task Validator_UpdateInvalidEmailTest()
+    {
+        var validator = new UpdateCustomerValidator();
+        var dto = new UpdateCustomerDto(null, "email");
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Email");
+    }
+
+    [Fact]
+    public async Task Validator_UpdateNoErrorsTest()
+    {
+        var validator = new UpdateCustomerValidator();
+        var dto = new UpdateCustomerDto("Alex", null);
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeTrue();
     }
 
     [Fact]

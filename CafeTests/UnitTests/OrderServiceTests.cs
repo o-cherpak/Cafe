@@ -5,6 +5,7 @@ using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Models;
 using CafeApi.Repositories;
 using CafeApi.Services.OrderService;
+using CafeApi.Validators.OrderValidators;
 using FluentAssertions;
 
 namespace CafeTests.UnitTests;
@@ -245,17 +246,54 @@ public class OrderServiceTests
             [new OrderItemDto(_menuList[0].Id, 2)]
         );
 
-        var result = 
+        var result =
             await _service.CreateAsync(dto, customerPromotion.PromotionId);
 
         result.Total.Should().Be(150);
         result.FinalTotal.Should().Be(135);
 
-        var usedPromo = 
+        var usedPromo =
             await _db.CustomerPromotions.FindAsync(customerPromotion.Id);
-        
+
         usedPromo!.IsUsed.Should().BeTrue();
         usedPromo.UsedAt.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task Validator_CreateNoErrorsTest()
+    {
+        var dto = new CreateOrderDto(
+            1,
+            new List<OrderItemDto>
+            {
+                new OrderItemDto(1, 2),
+                new OrderItemDto(2, 1)
+            }
+        );
+        var validator = new CreateOrderValidator();
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Validator_CreateInvalidTest()
+    {
+        var dto = new CreateOrderDto(
+            -100,
+            new List<OrderItemDto>
+            {
+                new OrderItemDto(-6, -1)
+            }
+        );
+
+        var validator = new CreateOrderValidator();
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "CustomerId");
+        result.Errors.Should().Contain(e => e.PropertyName == "Items[0].MenuItemId");
+        result.Errors.Should().Contain(e => e.PropertyName == "Items[0].Quantity");
     }
 
     [Fact]
@@ -274,16 +312,16 @@ public class OrderServiceTests
             PurchasedAt = DateTime.UtcNow,
             IsUsed = false
         };
-        
+
         _db.CustomerPromotions.Add(customerPromotion);
         await _db.SaveChangesAsync();
-        
+
         var dto = new CreateOrderDto(
             _customerList[0].Id,
             [new OrderItemDto(_menuList[1].Id, 1)]
         );
 
-        var result = 
+        var result =
             await _service.CreateAsync(dto, customerPromotion.PromotionId);
 
         result.Total.Should().Be(50);

@@ -5,6 +5,7 @@ using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Models;
 using CafeApi.Repositories;
 using CafeApi.Services.PromotionService;
+using CafeApi.Validators.PromotionValidators;
 using FluentAssertions;
 
 namespace CafeTests.UnitTests;
@@ -104,6 +105,43 @@ public class PromotionServiceTests
     }
 
     [Fact]
+    public async Task Validator_CreateNoErrorsTest()
+    {
+        var dto = new CreatePromotionDto(
+            "Free Coffee",
+            "Valid description",
+            10,
+            DiscountType.Percentage,
+            10.0m
+        );
+        var validator = new CreatePromotionValidator();
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Validator_CreateInvalidTest()
+    {
+        var dto = new CreatePromotionDto(
+            "",
+            "gfgfger",
+            -1,
+            (DiscountType)99,
+            -5.0m
+        );
+
+        var validator = new CreatePromotionValidator();
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Name");
+        result.Errors.Should().Contain(e => e.PropertyName == "BonusCost");
+        result.Errors.Should().Contain(e => e.PropertyName == "DiscountType");
+        result.Errors.Should().Contain(e => e.PropertyName == "DiscountValue");
+    }
+
+    [Fact]
     public async Task UpdateTest()
     {
         await Seed();
@@ -120,6 +158,39 @@ public class PromotionServiceTests
         result.Name.Should().Be("New Name");
         result.DiscountValue.Should().Be(15);
         result.IsActive.Should().BeTrue();
+    }
+    
+    [Fact]
+    public async Task Validator_UpdateNoErrorsTest()
+    {
+        var dto = new UpdatePromotionDto(
+            "Summer Sale",
+            "Valid description",
+            15.0m,
+            true
+        );
+        var validator = new UpdatePromotionValidator();
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Validator_UpdateInvalidTest()
+    {
+        var dto = new UpdatePromotionDto(
+            "",
+            "description bom bom bom",
+            -5.0m,
+            null
+        );
+
+        var validator = new UpdatePromotionValidator();
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Name");
+        result.Errors.Should().Contain(e => e.PropertyName == "DiscountValue");
     }
 
     [Fact]

@@ -5,6 +5,7 @@ using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Models;
 using CafeApi.Repositories;
 using CafeApi.Services.MenuItemService;
+using CafeApi.Validators;
 using FluentAssertions;
 
 namespace CafeTests.UnitTests;
@@ -106,6 +107,30 @@ public class MenuItemServiceTests
         result2.Price.Should().Be(70);
         _db.MenuItems.Should().HaveCount(2);
     }
+    
+    [Fact]
+    public async Task Validator_InvalidPriceTest()
+    {
+        var validator = new CreateMenuItemValidator();
+        var dto = new CreateMenuItemDto("Espresso", ItemCategory.Beverages, 0, null);
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Price");
+    }
+    
+    [Fact]
+    public async Task Validator_EmptyNameTest()
+    {
+        var validator = new CreateMenuItemValidator();
+        var dto = new CreateMenuItemDto("", ItemCategory.Beverages, 45, null);
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Name");
+    }
 
     [Fact]
     public async Task UpdateTest()
@@ -140,6 +165,29 @@ public class MenuItemServiceTests
             Price = 50,
             IsAvailable = false
         });
+    }
+    
+    [Fact]
+    public async Task Validator_UpdateInvalidPriceTest()
+    {
+        var validator = new UpdateMenuItemValidator();
+        var dto = new UpdateMenuItemDto(null, -10, null);
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Price");
+    }
+
+    [Fact]
+    public async Task Validator_UpdateNoErrorsTest()
+    {
+        var validator = new UpdateMenuItemValidator();
+        var dto = new UpdateMenuItemDto("New Latte", 80, true);
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeTrue();
     }
 
     [Fact]
