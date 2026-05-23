@@ -5,6 +5,7 @@ using CafeApi.Exceptions;
 using CafeApi.Models;
 using CafeApi.Services;
 using CafeApi.Services.CustomerService;
+using CafeApi.Validators.UserValidators;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -98,6 +99,36 @@ public class AuthServiceTests : IDisposable
         );
 
         await Assert.ThrowsAsync<ConflictException>(() => _service.Register(dto));
+    }
+    
+    [Fact]
+    public async Task Validator_RegisterNoErrorsTest()
+    {
+        var dto = new RegisterDto(
+            "John", 
+            "test@cafe.com", 
+            "secure123", 
+            UserRole.Customer
+            );
+        var validator = new RegisterValidator();
+        
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Validator_RegisterInvalidTest()
+    {
+        var dto = new RegisterDto("Alex", "email", "0", (UserRole)99);
+        var validator = new RegisterValidator();
+        
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Email");
+        result.Errors.Should().Contain(e => e.PropertyName == "Password");
+        result.Errors.Should().Contain(e => e.PropertyName == "Role");
     }
 
     [Fact]
