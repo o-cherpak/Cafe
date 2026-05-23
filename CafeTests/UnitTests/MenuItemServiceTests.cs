@@ -166,6 +166,29 @@ public class MenuItemServiceTests
             IsAvailable = false
         });
     }
+    
+    [Fact]
+    public async Task Validator_UpdateInvalidPriceTest()
+    {
+        var validator = new UpdateMenuItemValidator();
+        var dto = new UpdateMenuItemDto(null, -10, null);
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Price");
+    }
+
+    [Fact]
+    public async Task Validator_UpdateNoErrorsTest()
+    {
+        var validator = new UpdateMenuItemValidator();
+        var dto = new UpdateMenuItemDto("New Latte", 80, true);
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeTrue();
+    }
 
     [Fact]
     public async Task DeleteTest()
