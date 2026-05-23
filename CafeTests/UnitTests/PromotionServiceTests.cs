@@ -159,6 +159,39 @@ public class PromotionServiceTests
         result.DiscountValue.Should().Be(15);
         result.IsActive.Should().BeTrue();
     }
+    
+    [Fact]
+    public async Task Validator_UpdateNoErrorsTest()
+    {
+        var dto = new UpdatePromotionDto(
+            "Summer Sale",
+            "Valid description",
+            15.0m,
+            true
+        );
+        var validator = new UpdatePromotionValidator();
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Validator_UpdateInvalidTest()
+    {
+        var dto = new UpdatePromotionDto(
+            "",
+            "description bom bom bom",
+            -5.0m,
+            null
+        );
+
+        var validator = new UpdatePromotionValidator();
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Name");
+        result.Errors.Should().Contain(e => e.PropertyName == "DiscountValue");
+    }
 
     [Fact]
     public async Task Update_DeactivateTest()
