@@ -97,7 +97,7 @@ public class CustomerControllerTests : IClassFixture<CustomWebApplicationFactory
         createResponse.EnsureSuccessStatusCode();
         var created = await createResponse.Content.ReadFromJsonAsync<CustomerDto>();
 
-        UpdateCustomerDto updateDto = new UpdateCustomerDto(null, "newEmail");
+        UpdateCustomerDto updateDto = new UpdateCustomerDto(null, "newEmail@gmail.com");
         var putResponse = await _client.PutAsJsonAsync($"/api/customer/{created!.Id}", updateDto);
         putResponse.EnsureSuccessStatusCode();
 
@@ -107,7 +107,7 @@ public class CustomerControllerTests : IClassFixture<CustomWebApplicationFactory
 
 
         result!.Name.Should().Be("Customer");
-        result.Email.Should().Be("newEmail");
+        result.Email.Should().Be("newEmail@gmail.com");
     }
 
     [Fact]
