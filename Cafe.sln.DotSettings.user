@@ -9,6 +9,7 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1c8db8ce_002Ddf6d_002D4160_002D96bf_002Da8549c68af30/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=23de8380_002D6cb6_002D4809_002Db854_002D595b92bd2a5c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CustomerControllerTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::0A3875D8-956C-40F2-A5F5-4641A9B1DD44::net10.0::CafeTests.IntegrationTests.CustomerControllerTests&lt;/TestId&gt;&#xD;
@@ -19,6 +20,9 @@
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=45f1258f_002D8432_002D41ce_002D8848_002Df51c1c22501a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetOrder_ByCustomerIdTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\Users\sasha\RiderProjects\Cafe\CafeTests" Presentation="&amp;lt;CafeTests&amp;gt;" /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5fbcac95_002D20c1_002D443e_002Dbe02_002D53cf6704be59/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
 	
