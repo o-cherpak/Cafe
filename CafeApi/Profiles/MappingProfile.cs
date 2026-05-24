@@ -35,7 +35,15 @@ public class MappingProfile : Profile
                     opt.MapFrom(src => src.Items)
             );
 
-        CreateMap<CustomerPromotion, CustomerPromotionDto>();
+        CreateMap<CustomerPromotion, CustomerPromotionDto>()
+            .ForCtorParam("promotionDto",
+                opt =>
+                    opt.MapFrom(src => src.Promotion)
+            )
+            .ForCtorParam("customerDto",
+                opt =>
+                    opt.MapFrom(src => src.Customer)
+            );
         CreateMap<Promotion, PromotionDto>();
     }
 }

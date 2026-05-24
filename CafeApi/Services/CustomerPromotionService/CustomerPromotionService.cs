@@ -1,4 +1,5 @@
-﻿using CafeApi.DTOs;
+﻿using AutoMapper;
+using CafeApi.DTOs;
 using CafeApi.Exceptions;
 using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Interfaces;
@@ -9,33 +10,12 @@ namespace CafeApi.Services.CustomerPromotionService;
 public class CustomerPromotionService : ICustomerPromotionService
 {
     private readonly IUnitOfWork _uow;
+    private readonly IMapper _mapper;
 
-    public CustomerPromotionService(IUnitOfWork uow)
+    public CustomerPromotionService(IUnitOfWork uow, IMapper mapper)
     {
         _uow = uow;
-    }
-
-    private CustomerPromotionDto ToDto(CustomerPromotion promotion)
-    {
-        var promotionDto = new PromotionDto(
-            promotion.Promotion.Id,
-            promotion.Promotion.Name,
-            promotion.Promotion.Description,
-            promotion.Promotion.BonusCost,
-            promotion.Promotion.DiscountType,
-            promotion.Promotion.DiscountValue,
-            promotion.Promotion.IsActive
-        );
-
-        return new CustomerPromotionDto(
-            promotion.Id,
-            promotion.CustomerId,
-            promotionDto,
-            promotion.IsUsed,
-            promotion.PurchasedAt,
-            promotion.UsedAt,
-            promotion.UsedInOrderId
-        );
+        _mapper = mapper;
     }
 
     public async Task<CustomerPromotionDto> GetById(int id)
@@ -45,14 +25,14 @@ public class CustomerPromotionService : ICustomerPromotionService
         if (promotion is null)
             throw new CustomerPromotionNotFound($"Customer Promotion with {id} id not found");
 
-        return ToDto(promotion);
+        return _mapper.Map<CustomerPromotionDto>(promotion);
     }
 
     public async Task<IEnumerable<CustomerPromotionDto>> GetAll()
     {
-        var result = await _uow.CustomerPromotions.GetAllAsync();
+        var promotions = await _uow.CustomerPromotions.GetAllAsync();
 
-        return result.Select(ToDto);
+        return _mapper.Map<IEnumerable<CustomerPromotionDto>>(promotions);
     }
 
     public async Task<CustomerPromotionDto> BuyPromotion(BuyPromotionDto dto)
@@ -100,7 +80,7 @@ public class CustomerPromotionService : ICustomerPromotionService
 
         var saved = await _uow.CustomerPromotions.GetByIdAsync(newPromotion.Id);
 
-        return ToDto(saved!);
+        return _mapper.Map<CustomerPromotionDto>(saved);
     }
 
     public async Task<IEnumerable<CustomerPromotionDto>> GetByCustomerIdAsync(int customerId)
@@ -111,9 +91,9 @@ public class CustomerPromotionService : ICustomerPromotionService
             throw new CustomerNotFound($"Customer with {customerId} id not found");
         }
 
-        var result = await _uow.CustomerPromotions.GetByCustomerIdAsync(customerId);
+        var promotions = await _uow.CustomerPromotions.GetByCustomerIdAsync(customerId);
 
-        return result.Select(ToDto);
+        return _mapper.Map<IEnumerable<CustomerPromotionDto>>(promotions);
     }
 
     public async Task<CustomerPromotionDto> GetByCustomerAndPromotionAsync(int customerId, int promotionId)
@@ -138,7 +118,7 @@ public class CustomerPromotionService : ICustomerPromotionService
                 $"Customer with {promotionId} promotionId and with {customerId} customerId"
             );
 
-        return ToDto(result);
+        return _mapper.Map<CustomerPromotionDto>(result);
     }
 
     public async Task<CustomerPromotionDto> GetByOrderAsync(int orderId)
@@ -154,7 +134,7 @@ public class CustomerPromotionService : ICustomerPromotionService
         if (result is null)
             throw new CustomerPromotionNotFound($"Customer Promotion with {orderId} order id not found");
 
-        return ToDto(result);
+        return _mapper.Map<CustomerPromotionDto>(result);
     }
 
     public async Task Delete(int id)
