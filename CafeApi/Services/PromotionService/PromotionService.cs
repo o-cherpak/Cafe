@@ -1,4 +1,5 @@
-﻿using CafeApi.DTOs;
+﻿using AutoMapper;
+using CafeApi.DTOs;
 using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Interfaces;
 using CafeApi.Models;
@@ -8,46 +9,35 @@ namespace CafeApi.Services.PromotionService;
 public class PromotionService : IPromotionService
 {
     private readonly IUnitOfWork _uow;
+    private readonly IMapper _mapper;
 
-    public PromotionService(IUnitOfWork uow)
+    public PromotionService(IUnitOfWork uow, IMapper mapper)
     {
         _uow = uow;
+        _mapper = mapper;
     }
-
-    private PromotionDto ToDto(Promotion promotion)
-    {
-        return new PromotionDto(
-            promotion.Id,
-            promotion.Name,
-            promotion.Description,
-            promotion.BonusCost,
-            promotion.DiscountType,
-            promotion.DiscountValue,
-            promotion.IsActive
-        );
-    }
-
+    
     public async Task<PromotionDto> GetById(int id)
     {
         var promotion = await _uow.Promotions.GetByIdAsync(id);
 
         if (promotion is null) throw new PromotionNotFound($"Promotion with {id} id not found");
 
-        return ToDto(promotion);
+        return _mapper.Map<PromotionDto>(promotion);
     }
 
     public async Task<IEnumerable<PromotionDto>> GetActivePromotions()
     {
         var promotions = await _uow.Promotions.GetActivePromotionsAsync();
 
-        return promotions.Select(ToDto);
+        return _mapper.Map<IEnumerable<PromotionDto>>(promotions);
     }
 
     public async Task<IEnumerable<PromotionDto>> GetAll()
     {
         var promotions = await _uow.Promotions.GetAllAsync();
 
-        return promotions.Select(ToDto);
+        return _mapper.Map<IEnumerable<PromotionDto>>(promotions);
     }
 
     public async Task<PromotionDto> Create(CreatePromotionDto dto)
@@ -65,7 +55,7 @@ public class PromotionService : IPromotionService
         await _uow.Promotions.AddAsync(promotion);
         await _uow.SaveChangesAsync();
 
-        return ToDto(promotion);
+        return _mapper.Map<PromotionDto>(promotion);
     }
 
     public async Task Update(int id, UpdatePromotionDto dto)
