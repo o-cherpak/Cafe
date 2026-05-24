@@ -1,4 +1,5 @@
-﻿using CafeApi.DTOs;
+﻿using AutoMapper;
+using CafeApi.DTOs;
 using CafeApi.Enums;
 using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Interfaces;
@@ -9,24 +10,14 @@ namespace CafeApi.Services.MenuItemService;
 public class MenuItemService : IMenuItemService
 {
     private IUnitOfWork _uow;
+    private readonly IMapper _mapper;
 
-    public MenuItemService(IUnitOfWork uow)
+    public MenuItemService(IUnitOfWork uow, IMapper mapper)
     {
         _uow = uow;
+        _mapper = mapper;
     }
 
-    private MenuItemDto ToDto(MenuItem menuItem)
-    {
-        var dto = new MenuItemDto(
-            menuItem.Id,
-            menuItem.Name,
-            menuItem.Category,
-            menuItem.Price,
-            menuItem.IsAvailable
-        );
-
-        return dto;
-    }
 
     public async Task<IEnumerable<MenuItemDto>> GetAll(ItemCategory? category)
     {
@@ -38,10 +29,7 @@ public class MenuItemService : IMenuItemService
         }
         else menuItems = await _uow.MenuItems.GetAllAsync();
 
-
-        var result = menuItems.Select(ToDto);
-
-        return result;
+        return _mapper.Map<IEnumerable<MenuItemDto>>(menuItems);
     }
 
     public async Task<MenuItemDto> GetById(int id)
@@ -51,7 +39,7 @@ public class MenuItemService : IMenuItemService
         if (item is null)
             throw new MenuItemNotFound($"MenuItem with {id} id not found");
 
-        return ToDto(item);
+        return _mapper.Map<MenuItemDto>(item);
     }
 
     public async Task<MenuItemDto> Create(CreateMenuItemDto dto)
@@ -65,10 +53,9 @@ public class MenuItemService : IMenuItemService
         };
 
         await _uow.MenuItems.AddAsync(item);
-
         await _uow.SaveChangesAsync();
 
-        return ToDto(item);
+        return _mapper.Map<MenuItemDto>(item);
     }
 
     public async Task Update(int id, UpdateMenuItemDto dto)
