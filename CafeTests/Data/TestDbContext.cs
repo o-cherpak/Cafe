@@ -1,7 +1,7 @@
 ﻿using CafeApi.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace CafeTests;
+namespace CafeTests.Data;
 
 public static class TestDbContextFactory
 {

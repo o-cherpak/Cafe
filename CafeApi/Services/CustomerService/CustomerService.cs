@@ -1,4 +1,5 @@
-﻿using CafeApi.DTOs;
+﻿using AutoMapper;
+using CafeApi.DTOs;
 using CafeApi.Exceptions;
 using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Interfaces;
@@ -9,31 +10,19 @@ namespace CafeApi.Services.CustomerService;
 public class CustomerService : ICustomerService
 {
     private IUnitOfWork _uow;
+    private readonly IMapper _mapper;
 
-    public CustomerService(IUnitOfWork uow)
+    public CustomerService(IUnitOfWork uow, IMapper mapper)
     {
         _uow = uow;
-    }
-
-    private CustomerDto ToDto(Customer customer)
-    {
-        var dto = new CustomerDto(
-            customer.Id,
-            customer.Name,
-            customer.Email,
-            customer.BonusPoints
-        );
-
-        return dto;
+        _mapper = mapper;
     }
 
     public async Task<IEnumerable<CustomerDto>> GetAll()
     {
         var customers = await _uow.Customers.GetAllAsync();
 
-        var result = customers.Select(ToDto);
-
-        return result;
+        return _mapper.Map<IEnumerable<CustomerDto>>(customers);
     }
 
     public async Task<CustomerDto> GetById(int id)
@@ -42,7 +31,7 @@ public class CustomerService : ICustomerService
 
         if (customer is null) throw new CustomerNotFound($"Customer with {id} id not found");
 
-        return ToDto(customer);
+        return _mapper.Map<CustomerDto>(customer);
     }
 
     public async Task<CustomerDto> GetByEmail(string email)
@@ -51,7 +40,7 @@ public class CustomerService : ICustomerService
 
         if (customer is null) throw new CustomerNotFound($"Customer with {email} email not found");
 
-        return ToDto(customer);
+        return _mapper.Map<CustomerDto>(customer);
     }
 
     public async Task<CustomerDto> Create(CreateCustomerDto dto)
@@ -72,7 +61,7 @@ public class CustomerService : ICustomerService
         await _uow.Customers.AddAsync(newCustomer);
         await _uow.SaveChangesAsync();
 
-        return ToDto(newCustomer);
+        return _mapper.Map<CustomerDto>(newCustomer);
     }
 
     public async Task Update(int id, UpdateCustomerDto dto)

@@ -6,6 +6,8 @@ using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Models;
 using CafeApi.Repositories;
 using CafeApi.Services.CustomerPromotionService;
+using CafeTests.Data;
+using CafeTests.Helpers;
 using FluentAssertions;
 
 namespace CafeTests.UnitTests;
@@ -21,7 +23,8 @@ public class CustomerPromotionServiceTests
     {
         _db = TestDbContextFactory.Create();
         var uow = new UnitOfWork(_db);
-        _service = new CustomerPromotionService(uow);
+        var mapper = TestMapperFactory.Create();
+        _service = new CustomerPromotionService(uow, mapper);
     }
 
     private async Task Seed()

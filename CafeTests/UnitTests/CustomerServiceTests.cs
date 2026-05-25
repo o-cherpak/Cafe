@@ -5,6 +5,8 @@ using CafeApi.Models;
 using CafeApi.Repositories;
 using CafeApi.Services.CustomerService;
 using CafeApi.Validators.CustomerValidators;
+using CafeTests.Data;
+using CafeTests.Helpers;
 using FluentAssertions;
 
 namespace CafeTests.UnitTests;
@@ -19,7 +21,8 @@ public class CustomerServiceTests
         _db = TestDbContextFactory.Create();
 
         var uow = new UnitOfWork(_db);
-        _service = new CustomerService(uow);
+        var mapper = TestMapperFactory.Create();
+        _service = new CustomerService(uow, mapper);
     }
 
     private async Task SeedDb()

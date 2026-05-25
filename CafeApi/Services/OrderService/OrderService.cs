@@ -1,4 +1,5 @@
-﻿using CafeApi.DTOs;
+﻿using AutoMapper;
+using CafeApi.DTOs;
 using CafeApi.Enums;
 using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Interfaces;
@@ -9,33 +10,14 @@ namespace CafeApi.Services.OrderService;
 public class OrderService : IOrderService
 {
     private readonly IUnitOfWork _uow;
+    private readonly IMapper _mapper;
 
-    public OrderService(IUnitOfWork uow)
+    public OrderService(IUnitOfWork uow, IMapper mapper)
     {
         _uow = uow;
+        _mapper = mapper;
     }
 
-    private OrderResponseDto ToDto(Order order)
-    {
-        var dto = new OrderResponseDto(
-            order.Id, 
-            order.Customer.Name,
-            order.CustomerId,
-            order.Status,
-            order.CreatedAt,
-            Total: order.Items.Sum(i => i.UnitPrice * i.Quantity),
-            FinalTotal: order.FinalTotal,
-            Items: order.Items.Select(i =>
-                new OrderItemResponseDto(
-                    i.MenuItem.Name,
-                    i.Quantity,
-                    i.UnitPrice
-                )
-            ).ToList()
-        );
-
-        return dto;
-    }
 
     public async Task<IEnumerable<OrderResponseDto>> GetAll
     (
@@ -52,7 +34,7 @@ public class OrderService : IOrderService
             orders = orders.Where(o => o.Status == status.Value);
         }
 
-        return orders.Select(ToDto);
+        return _mapper.Map<IEnumerable<OrderResponseDto>>(orders);
     }
 
     public async Task<OrderResponseDto> GetById(int id)
@@ -62,14 +44,14 @@ public class OrderService : IOrderService
         if (order is null)
             throw new OrderNotFound($"Order with {id} id not found");
 
-        return ToDto(order);
+        return _mapper.Map<OrderResponseDto>(order);
     }
 
     public async Task<IEnumerable<OrderResponseDto>> GetOrderByCustomerId(int id)
     {
         var orders = await _uow.Orders.GetOrderByCustomerIdAsync(id);
 
-        return orders.Select(ToDto);
+        return _mapper.Map<IEnumerable<OrderResponseDto>>(orders);
     }
 
     public async Task<OrderResponseDto> CreateAsync(CreateOrderDto dto, int? promotionId = null)
@@ -151,7 +133,7 @@ public class OrderService : IOrderService
         if (saved is null)
             throw new OrderNotFound($"Order with {order.Id} id not found");
 
-        return ToDto(saved);
+        return _mapper.Map<OrderResponseDto>(saved);
     }
 
     public async Task Update(int id, OrderStatus status)
