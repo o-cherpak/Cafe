@@ -6,6 +6,7 @@ using CafeApi.Models;
 using CafeApi.Services;
 using CafeApi.Services.CustomerService;
 using CafeApi.Validators.UserValidators;
+using CafeTests.Data;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Moq;

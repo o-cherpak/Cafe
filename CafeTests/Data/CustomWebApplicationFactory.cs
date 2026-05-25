@@ -1,12 +1,12 @@
 ﻿using CafeApi.Data;
+using CafeTests.Helpers;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CafeTests;
+namespace CafeTests.Data;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {

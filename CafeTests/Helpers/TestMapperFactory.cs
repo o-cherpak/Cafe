@@ -2,7 +2,7 @@
 using CafeApi.Profiles;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace CafeTests;
+namespace CafeTests.Helpers;
 
 public static class TestMapperFactory
 {

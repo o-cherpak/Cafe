@@ -6,6 +6,8 @@ using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Models;
 using CafeApi.Repositories;
 using CafeApi.Services.CustomerPromotionService;
+using CafeTests.Data;
+using CafeTests.Helpers;
 using FluentAssertions;
 
 namespace CafeTests.UnitTests;

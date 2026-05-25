@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using CafeApi.Data;
 using CafeApi.DTOs;
 using CafeApi.Enums;
+using CafeTests.Data;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 

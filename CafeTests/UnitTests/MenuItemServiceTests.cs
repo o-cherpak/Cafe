@@ -6,6 +6,8 @@ using CafeApi.Models;
 using CafeApi.Repositories;
 using CafeApi.Services.MenuItemService;
 using CafeApi.Validators;
+using CafeTests.Data;
+using CafeTests.Helpers;
 using FluentAssertions;
 
 namespace CafeTests.UnitTests;

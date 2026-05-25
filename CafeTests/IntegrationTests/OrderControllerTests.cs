@@ -4,6 +4,7 @@ using CafeApi.Data;
 using CafeApi.DTOs;
 using CafeApi.Enums;
 using CafeApi.Models;
+using CafeTests.Data;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 
