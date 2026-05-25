@@ -14,35 +14,31 @@ public class MappingProfile : Profile
 
         CreateMap<OrderItem, OrderItemResponseDto>()
             .ForCtorParam(
-                "menuItemName",
+                "MenuItemName",
                 opt => opt
                     .MapFrom(src => src.MenuItem.Name)
             );
 
         CreateMap<Order, OrderResponseDto>()
-            .ForCtorParam("customerName",
+            .ForCtorParam("CustomerName",
                 opt =>
                     opt.MapFrom(src => src.Customer.Name)
             )
-            .ForCtorParam("total",
+            .ForCtorParam("Total",
                 opt =>
                     opt.MapFrom(src =>
                         src.Items.Sum(i => i.UnitPrice * i.Quantity)
                     )
             )
             .ForCtorParam(
-                "items", opt =>
+                "Items", opt =>
                     opt.MapFrom(src => src.Items)
             );
 
         CreateMap<CustomerPromotion, CustomerPromotionDto>()
-            .ForCtorParam("promotionDto",
+            .ForCtorParam("Promotion",
                 opt =>
                     opt.MapFrom(src => src.Promotion)
-            )
-            .ForCtorParam("customerDto",
-                opt =>
-                    opt.MapFrom(src => src.Customer)
             );
         CreateMap<Promotion, PromotionDto>();
     }
