@@ -20,7 +20,8 @@ public class MenuItemServiceTests
         _db = TestDbContextFactory.Create();
 
         var uow = new UnitOfWork(_db);
-        _service = new MenuItemService(uow);
+        var mapper = TestMapperFactory.Create();
+        _service = new MenuItemService(uow, mapper);
     }
     
     [Fact]

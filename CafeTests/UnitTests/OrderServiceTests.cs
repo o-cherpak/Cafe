@@ -23,7 +23,8 @@ public class OrderServiceTests
         _db = TestDbContextFactory.Create();
 
         var uow = new UnitOfWork(_db);
-        _service = new OrderService(uow);
+        var mapper = TestMapperFactory.Create();
+        _service = new OrderService(uow, mapper);
     }
 
     private async Task Seed()
