@@ -9,6 +9,7 @@ using CafeApi.Services.CustomerService;
 using CafeApi.Services.MenuItemService;
 using CafeApi.Services.OrderService;
 using CafeApi.Services.PromotionService;
+using CafeApi.Services.TokenService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -38,6 +39,7 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddMaps(typeof(Program).Assembly);
 });
 
+builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
