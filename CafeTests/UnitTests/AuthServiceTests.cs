@@ -5,6 +5,7 @@ using CafeApi.Exceptions;
 using CafeApi.Models;
 using CafeApi.Services;
 using CafeApi.Services.CustomerService;
+using CafeApi.Services.TokenService;
 using CafeApi.Validators.UserValidators;
 using CafeTests.Data;
 using FluentAssertions;
@@ -34,8 +35,9 @@ public class AuthServiceTests : IDisposable
             .AddInMemoryCollection(jwtSettings!)
             .Build();
 
+        var tokenService = new TokenService(configuration);
         _customerService = new Mock<ICustomerService>();
-        _service = new AuthService(configuration, _db, _customerService.Object);
+        _service = new AuthService(_db, _customerService.Object, tokenService);
     }
 
     private async Task SeedDb()
@@ -101,18 +103,18 @@ public class AuthServiceTests : IDisposable
 
         await Assert.ThrowsAsync<ConflictException>(() => _service.Register(dto));
     }
-    
+
     [Fact]
     public async Task Validator_RegisterNoErrorsTest()
     {
         var dto = new RegisterDto(
-            "John", 
-            "test@cafe.com", 
-            "secure123", 
+            "John",
+            "test@cafe.com",
+            "secure123",
             UserRole.Customer
-            );
+        );
         var validator = new RegisterValidator();
-        
+
         var result = await validator.ValidateAsync(dto);
 
         result.IsValid.Should().BeTrue();
@@ -123,7 +125,7 @@ public class AuthServiceTests : IDisposable
     {
         var dto = new RegisterDto("Alex", "email", "0", (UserRole)99);
         var validator = new RegisterValidator();
-        
+
         var result = await validator.ValidateAsync(dto);
 
         result.IsValid.Should().BeFalse();
