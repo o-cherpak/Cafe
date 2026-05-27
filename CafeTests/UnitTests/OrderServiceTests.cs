@@ -4,11 +4,13 @@ using CafeApi.Enums;
 using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Models;
 using CafeApi.Repositories;
+using CafeApi.Services.BonusesService;
 using CafeApi.Services.OrderService;
 using CafeApi.Validators.OrderValidators;
 using CafeTests.Data;
 using CafeTests.Helpers;
 using FluentAssertions;
+using Moq;
 
 namespace CafeTests.UnitTests;
 
@@ -16,6 +18,7 @@ public class OrderServiceTests
 {
     private readonly CafeDbContext _db;
     private readonly OrderService _service;
+    private readonly Mock<IBonusesService> _bonusesService;
     private List<Customer> _customerList = new List<Customer>()!;
     private List<MenuItem> _menuList = new List<MenuItem>();
     private List<Promotion> _promotionList = new List<Promotion>();
@@ -26,7 +29,9 @@ public class OrderServiceTests
 
         var uow = new UnitOfWork(_db);
         var mapper = TestMapperFactory.Create();
-        _service = new OrderService(uow, mapper);
+        _bonusesService = new Mock<IBonusesService>();
+
+        _service = new OrderService(uow, mapper, _bonusesService.Object);
     }
 
     private async Task Seed()
@@ -212,10 +217,16 @@ public class OrderServiceTests
             _customerList[0].Id,
             [new OrderItemDto(_menuList[0].Id, itemQuantity)]
         );
-
+        
         var order = await _service.CreateAsync(dto);
+        
+        _bonusesService
+            .Setup(x => x.Calculate(It.Is<Order>(o => o.Id == order.Id)))
+            .Returns(expectedPoints);
+
         await _service.Update(order.Id, OrderStatus.Completed);
 
+        
         var updatedOrder = await _service.GetById(order.Id);
 
         var updatedCustomer = await _db.Customers.FindAsync(_customerList[0].Id);
@@ -329,6 +340,10 @@ public class OrderServiceTests
 
         result.Total.Should().Be(50);
         result.FinalTotal.Should().Be(30);
+        
+        _db.ChangeTracker.Clear();
+        var dbPromotion = await _db.CustomerPromotions.FindAsync(customerPromotion.Id);
+        dbPromotion!.UsedInOrderId.Should().Be(result.Id);
     }
 
     [Fact]
