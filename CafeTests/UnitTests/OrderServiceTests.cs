@@ -340,6 +340,10 @@ public class OrderServiceTests
 
         result.Total.Should().Be(50);
         result.FinalTotal.Should().Be(30);
+        
+        _db.ChangeTracker.Clear();
+        var dbPromotion = await _db.CustomerPromotions.FindAsync(customerPromotion.Id);
+        dbPromotion!.UsedInOrderId.Should().Be(result.Id);
     }
 
     [Fact]

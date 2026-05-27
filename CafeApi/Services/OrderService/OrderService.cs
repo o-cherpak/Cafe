@@ -75,15 +75,14 @@ public class OrderService : IOrderService
         var total = order.Items.Sum(i => i.UnitPrice * i.Quantity);
         order.FinalTotal = total;
 
-        await _uow.Orders.AddAsync(order);
-        await _uow.SaveChangesAsync();
-        
         if (promotionId is not null)
         {
             await ApplyPromotionAsync(order, customer.Id, promotionId.Value, total);
         }
-        
+        await _uow.Orders.AddAsync(order);
         _uow.Customers.Update(customer);
+        
+        
         await _uow.SaveChangesAsync();
 
         var saved = await _uow.Orders.GetWithItemsAsync(order.Id);
@@ -138,7 +137,8 @@ public class OrderService : IOrderService
 
         promotion.IsUsed = true;
         promotion.UsedAt = DateTime.UtcNow;
-        promotion.UsedInOrderId = order.Id;
+        
+        promotion.Order = order;
     }
 
     public async Task Update(int id, OrderStatus status)
