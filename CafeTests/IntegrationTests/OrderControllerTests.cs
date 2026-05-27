@@ -160,7 +160,6 @@ public class OrderControllerTests : IClassFixture<CustomWebApplicationFactory>
         getResponse.EnsureSuccessStatusCode();
         var result = await getResponse.Content.ReadFromJsonAsync<OrderResponseDto>();
 
-
         result!.Items.First().Quantity.Should().Be(2);
         result.CustomerName.Should().Be(_customerList[1].Name);
         result.Status.Should().Be(OrderStatus.Completed);
