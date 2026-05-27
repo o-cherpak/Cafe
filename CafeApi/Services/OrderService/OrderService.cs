@@ -4,6 +4,7 @@ using CafeApi.Enums;
 using CafeApi.Exceptions.NotFoundExceptions;
 using CafeApi.Interfaces;
 using CafeApi.Models;
+using CafeApi.Services.BonusesService;
 
 namespace CafeApi.Services.OrderService;
 
@@ -11,13 +12,14 @@ public class OrderService : IOrderService
 {
     private readonly IUnitOfWork _uow;
     private readonly IMapper _mapper;
+    private readonly IBonusesService _bonusesService;
 
-    public OrderService(IUnitOfWork uow, IMapper mapper)
+    public OrderService(IUnitOfWork uow, IMapper mapper, IBonusesService bonusesService)
     {
         _uow = uow;
         _mapper = mapper;
+        _bonusesService = bonusesService;
     }
-
 
     public async Task<IEnumerable<OrderResponseDto>> GetAll
     (
@@ -95,7 +97,7 @@ public class OrderService : IOrderService
         var total = order.Items.Sum(i => i.UnitPrice * i.Quantity);
         order.FinalTotal = total;
         //Promotion
-        
+
         if (promotionId is not null)
         {
             var promotion = await _uow.CustomerPromotions.GetByCustomerAndPromotionAsync
@@ -145,8 +147,7 @@ public class OrderService : IOrderService
 
         if (order.Status != OrderStatus.Completed && status == OrderStatus.Completed)
         {
-            var total = order.Items.Sum(i => i.UnitPrice * i.Quantity);
-            order.Customer.BonusPoints += (int)(total * 10);
+            order.Customer.BonusPoints += _bonusesService.Calculate(order);
         }
 
         order.Status = status;
