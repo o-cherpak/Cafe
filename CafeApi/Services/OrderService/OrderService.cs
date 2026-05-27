@@ -62,8 +62,7 @@ public class OrderService : IOrderService
 
         if (customer is null)
             throw new OrderNotFound($"Order with {dto.CustomerId} customer id not found");
-
-        //Order
+        
         var order = new Order
         {
             CustomerId = dto.CustomerId,
@@ -79,12 +78,12 @@ public class OrderService : IOrderService
         {
             await ApplyPromotionAsync(order, customer.Id, promotionId.Value, total);
         }
+        
         await _uow.Orders.AddAsync(order);
         _uow.Customers.Update(customer);
         
         
         await _uow.SaveChangesAsync();
-
         var saved = await _uow.Orders.GetWithItemsAsync(order.Id);
 
         if (saved is null)
