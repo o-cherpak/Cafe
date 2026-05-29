@@ -5,4 +5,6 @@ riderModule.iml
 /_ReSharper.Caches/
 appsettings.Development.json
 .env
+.idea
+.idea/workspace.xml
 Logs/
