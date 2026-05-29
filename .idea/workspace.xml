@@ -4,8 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8b317fcc-4b9d-4558-ae90-9798b9de746f" name="Changes" comment="add enums for item categories, order statuses, discount types, and user roles in CafeUI">
+    <list default="true" id="8b317fcc-4b9d-4558-ae90-9798b9de746f" name="Changes" comment="update workspace.xml to include new task and set last commit message">
+      <change afterPath="$PROJECT_DIR$/CafeUI/src/types/auth.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CafeUI/src/types/customer-promotion.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CafeUI/src/types/customer.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CafeUI/src/types/menuItem.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CafeUI/src/types/order.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CafeUI/src/types/promotions.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CafeUI/src/types/enums/enums.ts" beforeDir="false" afterPath="$PROJECT_DIR$/CafeUI/src/types/enums/enums.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,6 +66,11 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\sasha\RiderProjects\Cafe\CafeUI\src\types" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -78,6 +90,7 @@
       <workItem from="1779960742498" duration="1658000" />
       <workItem from="1779980944574" duration="213000" />
       <workItem from="1779982179880" duration="1004000" />
+      <workItem from="1780057568063" duration="1846000" />
     </task>
     <task id="LOCAL-00001" summary="initialize react app with vite">
       <option name="closed" value="true" />
@@ -111,7 +124,15 @@
       <option name="project" value="LOCAL" />
       <updated>1779983129744</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="update workspace.xml to include new task and set last commit message">
+      <option name="closed" value="true" />
+      <created>1780057722225</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1780057722227</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -145,6 +166,8 @@
     <MESSAGE value="install axios, react-router-dom, zustand, tailwindcss" />
     <MESSAGE value="remove unused styles and redundant assets in CafeUI" />
     <MESSAGE value="add enums for item categories, order statuses, discount types, and user roles in CafeUI" />
-    <option name="LAST_COMMIT_MESSAGE" value="add enums for item categories, order statuses, discount types, and user roles in CafeUI" />
+    <MESSAGE value="update workspace.xml to reflect recent changes in CafeUI enums and tasks" />
+    <MESSAGE value="update workspace.xml to include new task and set last commit message" />
+    <option name="LAST_COMMIT_MESSAGE" value="update workspace.xml to include new task and set last commit message" />
   </component>
 </project>
