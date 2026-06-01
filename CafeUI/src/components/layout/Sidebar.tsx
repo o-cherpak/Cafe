@@ -4,7 +4,7 @@ const link_style =
 
 export function Sidebar() {
   return (
-    <aside className="w-48 flex-shrink-0">
+    <aside className="w-58 flex-shrink-0">
       <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm sticky top-20">
         <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 px-2">
           Navigation
