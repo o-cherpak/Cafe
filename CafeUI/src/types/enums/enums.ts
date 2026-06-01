@@ -1,6 +1,9 @@
 export const ItemCategory = {
   Beverages: 0,
   Food: 1,
+  Retail: 2,
+  AddOns: 3,
+  Other: 4
 }
 
 export const OrderStatus = {

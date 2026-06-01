@@ -5,7 +5,7 @@ export interface PromotionDto {
   name: string
   description?: string
   bonusCost: number
-  discountType: typeof DiscountType
+  discountType: keyof typeof DiscountType
   discountValue: number
   isActive: boolean
 }
@@ -14,7 +14,7 @@ export interface CreatePromotionDto {
   name: string
   description?: string
   bonusCost: number
-  discountType: typeof DiscountType
+  discountType: keyof typeof DiscountType
   discountValue: number
 }
 

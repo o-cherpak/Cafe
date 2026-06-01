@@ -4,7 +4,7 @@ export interface RegisterDto {
   name?: string
   email: string
   password: string
-  role: typeof UserRole
+  role: keyof typeof UserRole
 }
 
 export interface LoginDto {
@@ -15,6 +15,6 @@ export interface LoginDto {
 export interface AuthResponseDto {
   token: string
   email: string
-  role: typeof UserRole
+  role: keyof typeof UserRole
   customerId?: number
 }

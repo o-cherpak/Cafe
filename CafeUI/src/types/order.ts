@@ -20,7 +20,7 @@ export interface OrderResponseDto {
   id: number
   customerName: string
   customerId: number
-  status: typeof OrderStatus
+  status: keyof typeof OrderStatus
   createdAt: string
   total: number
   finalTotal: number
