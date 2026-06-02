@@ -61,7 +61,7 @@ public class OrderService : IOrderService
         var customer = await _uow.Customers.GetByIdAsync(dto.CustomerId);
 
         if (customer is null)
-            throw new OrderNotFound($"Order with {dto.CustomerId} customer id not found");
+            throw new CustomerNotFound($"Customer with id {dto.CustomerId} not found");
         
         var order = new Order
         {
@@ -94,16 +94,15 @@ public class OrderService : IOrderService
     
     private async Task<List<OrderItem>> MapOrderItemsAsync(IEnumerable<OrderItemDto> itemsDto)
     {
+        var itemsDtoList = itemsDto.ToList();
+        var ids = itemsDtoList.Select(x => x.MenuItemId).ToList();
+        var menuItems = (await _uow.MenuItems.GetManyAsync(ids)).ToList();
+
         var orderItems = new List<OrderItem>();
-
-        foreach (var itemDto in itemsDto)
+        foreach (var itemDto in itemsDtoList)
         {
-            var menuItem = await _uow.MenuItems.GetByIdAsync(itemDto.MenuItemId);
-
-            if (menuItem is null)
-            {
-                throw new MenuItemNotFound($"MenuItem with {itemDto.MenuItemId} id not found");
-            }
+            var menuItem = menuItems.FirstOrDefault(m => m.Id == itemDto.MenuItemId)
+                           ?? throw new MenuItemNotFound($"Menu item with id {itemDto.MenuItemId} not found");
 
             if (!menuItem.IsAvailable)
                 throw new InvalidOperationException($"{menuItem.Name} is unavailable");
