@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CafeApi.Repositories;
 
-public abstract class Repository<T> : IRepository<T> where T : class
+public abstract class Repository<T> : IRepository<T> where T : class, IEntity
 {
     protected readonly CafeDbContext Db;
     private readonly DbSet<T> _dbSet;
@@ -23,6 +23,14 @@ public abstract class Repository<T> : IRepository<T> where T : class
     public virtual async Task<IEnumerable<T>> GetAllAsync()
     {
         return await Db.Set<T>().AsNoTracking().ToListAsync();
+    }
+
+    public async Task<IEnumerable<T>> GetManyAsync(List<int> ids)
+    {
+        return await _dbSet
+            .Where(x => ids.Contains(x.Id))
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task AddAsync(T entity)

@@ -1,6 +1,8 @@
-﻿namespace CafeApi.Models;
+﻿using CafeApi.Interfaces;
 
-public class CustomerPromotion
+namespace CafeApi.Models;
+
+public class CustomerPromotion : IEntity
 {
     public int Id { get; set; }
 

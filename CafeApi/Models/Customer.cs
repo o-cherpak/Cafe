@@ -1,6 +1,8 @@
-﻿namespace CafeApi.Models;
+﻿using CafeApi.Interfaces;
 
-public class Customer {
+namespace CafeApi.Models;
+
+public class Customer : IEntity {
     public int Id { get; set; }
     public string Name { get; set; } = null!;
     public string Email { get; set; } = null!;
