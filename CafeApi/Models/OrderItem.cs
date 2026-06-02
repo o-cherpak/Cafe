@@ -1,6 +1,8 @@
-﻿namespace CafeApi.Models;
+﻿using CafeApi.Interfaces;
 
-public class OrderItem
+namespace CafeApi.Models;
+
+public class OrderItem : IEntity
 {
     public int Id { get; set; }
     public int OrderId { get; set; }

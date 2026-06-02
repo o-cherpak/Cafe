@@ -1,8 +1,9 @@
 ﻿using CafeApi.Enums;
+using CafeApi.Interfaces;
 
 namespace CafeApi.Models;
 
-public class Promotion
+public class Promotion : IEntity
 {
     public int Id { get; set; }
     public string Name { get; set; }
