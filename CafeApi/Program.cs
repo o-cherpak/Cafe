@@ -1,5 +1,6 @@
 using System.Text;
 using CafeApi.Data;
+using CafeApi.Helpers;
 using CafeApi.Interfaces;
 using CafeApi.Middleware;
 using CafeApi.Repositories;
@@ -35,10 +36,7 @@ builder.Host.UseSerilog();
 // Add services to the container.
 builder.Services.AddControllers();
 
-builder.Services.AddAutoMapper(cfg => 
-{
-    cfg.AddMaps(typeof(Program).Assembly);
-});
+builder.Services.AddAutoMapper(cfg => { cfg.AddMaps(typeof(Program).Assembly); });
 
 builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddFluentValidationAutoValidation();
@@ -54,6 +52,9 @@ builder.Services.AddScoped<IBonusesService, BonusesService>();
 
 builder.Services.AddDbContext<CafeDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services.AddOpenApi("v1",
+    options => { options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); });
 
 builder.Services.AddAuthentication(options =>
     {
@@ -113,11 +114,23 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference(options =>
+    {
+        options
+            .WithTitle("App Server")
+            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+
+        options
+            .AddPreferredSecuritySchemes("Bearer")
+            .AddHttpAuthentication(
+                "Bearer",
+                auth => { auth.Token = ""; }
+            )
+            .EnablePersistentAuthentication();
+    });
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
