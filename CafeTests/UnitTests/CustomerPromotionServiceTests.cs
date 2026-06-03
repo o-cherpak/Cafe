@@ -181,7 +181,7 @@ public class CustomerPromotionServiceTests
         await _service.BuyPromotion(new BuyPromotionDto(_customers[0].Id, _promotions[0].Id));
 
         var result = await _service.GetByCustomerIdAsync(_customers[0].Id);
-
+        
         result.Should().HaveCount(1);
         result.Should().AllSatisfy(p => p.CustomerId.Should().Be(_customers[0].Id));
     }
@@ -199,6 +199,79 @@ public class CustomerPromotionServiceTests
 
         result.CustomerId.Should().Be(_customers[0].Id);
         result.Promotion.Id.Should().Be(_promotions[0].Id);
+    }
+
+    [Fact]
+    public async Task GetByCustomerAndPromotion_CustomerNotFoundTest()
+    {
+        await Seed();
+        await Assert.ThrowsAsync<CustomerNotFound>(() => 
+            _service.GetByCustomerAndPromotionAsync(99999, _promotions[0].Id));
+    }
+
+    [Fact]
+    public async Task GetByCustomerAndPromotion_PromotionNotFoundTest()
+    {
+        await Seed();
+        await Assert.ThrowsAsync<PromotionNotFound>(() => 
+            _service.GetByCustomerAndPromotionAsync(_customers[0].Id, 99999));
+    }
+
+    [Fact]
+    public async Task GetByCustomerAndPromotion_CustomerPromotionNotFoundTest()
+    {
+        await Seed();
+        await Assert.ThrowsAsync<CustomerPromotionNotFound>(() => 
+            _service.GetByCustomerAndPromotionAsync(_customers[0].Id, _promotions[0].Id));
+    }
+
+    [Fact]
+    public async Task GetByOrderAsyncTest()
+    {
+        await Seed();
+        var bought = await _service.BuyPromotion(new BuyPromotionDto(_customers[0].Id, _promotions[0].Id));
+        
+        var order = new Order
+        {
+            CustomerId = _customers[0].Id,
+            CreatedAt = DateTime.UtcNow,
+            Status = OrderStatus.Completed,
+            FinalTotal = 100
+        };
+        _db.Orders.Add(order);
+        await _db.SaveChangesAsync();
+
+        var customerPromo = await _db.CustomerPromotions.FindAsync(bought.Id);
+        customerPromo!.UsedInOrderId = order.Id;
+        await _db.SaveChangesAsync();
+
+        var result = await _service.GetByOrderAsync(order.Id);
+
+        result.Should().NotBeNull();
+        result.Id.Should().Be(bought.Id);
+    }
+
+    [Fact]
+    public async Task GetByOrderAsync_OrderNotFoundTest()
+    {
+        await Assert.ThrowsAsync<OrderNotFound>(() => _service.GetByOrderAsync(99999));
+    }
+
+    [Fact]
+    public async Task GetByOrderAsync_CustomerPromotionNotFoundTest()
+    {
+        await Seed();
+        var order = new Order
+        {
+            CustomerId = _customers[0].Id,
+            CreatedAt = DateTime.UtcNow,
+            Status = OrderStatus.Completed,
+            FinalTotal = 100
+        };
+        _db.Orders.Add(order);
+        await _db.SaveChangesAsync();
+
+        await Assert.ThrowsAsync<CustomerPromotionNotFound>(() => _service.GetByOrderAsync(order.Id));
     }
 
     [Fact]
