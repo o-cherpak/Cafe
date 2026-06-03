@@ -373,4 +373,56 @@ public class OrderServiceTests
             _service.CreateAsync(dto, customerPromotion.PromotionId)
         );
     }
+
+    [Fact]
+    public async Task CreateWithFixed_NegativeTest()
+    {
+        await Seed();
+
+        var promotion = new Promotion
+        {
+            Name = "1000 Off",
+            BonusCost = 100,
+            DiscountType = DiscountType.FixedAmount,
+            DiscountValue = 1000,
+            IsActive = true
+        };
+        _db.Promotions.Add(promotion);
+        await _db.SaveChangesAsync();
+
+        var customerPromotion = new CustomerPromotion
+        {
+            CustomerId = _customerList[0].Id,
+            PromotionId = promotion.Id,
+            PurchasedAt = DateTime.UtcNow,
+            IsUsed = false
+        };
+        _db.CustomerPromotions.Add(customerPromotion);
+        await _db.SaveChangesAsync();
+
+        var dto = new CreateOrderDto(
+            _customerList[0].Id,
+            [new OrderItemDto(_menuList[1].Id, 1)]
+        );
+
+        var result = await _service.CreateAsync(dto, promotion.Id);
+
+        result.Total.Should().Be(50);
+        result.FinalTotal.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task CreateWithPromotion_NotFoundTest()
+    {
+        await Seed();
+
+        var dto = new CreateOrderDto(
+            _customerList[0].Id,
+            [new OrderItemDto(_menuList[0].Id, 1)]
+        );
+        
+        await Assert.ThrowsAsync<CustomerNotFound>(() =>
+            _service.CreateAsync(dto, _promotionList[0].Id)
+        );
+    }
 }
