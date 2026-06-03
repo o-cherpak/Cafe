@@ -135,6 +135,30 @@ public class AuthServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task Validator_LoginNoErrorsTest()
+    {
+        var dto = new LoginDto("test@cafe.com", "secure123");
+        var validator = new LoginValidator();
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Validator_LoginInvalidTest()
+    {
+        var dto = new LoginDto("invalid-email", "");
+        var validator = new LoginValidator();
+
+        var result = await validator.ValidateAsync(dto);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Email");
+        result.Errors.Should().Contain(e => e.PropertyName == "Password");
+    }
+
+    [Fact]
     public async Task LoginTest()
     {
         await SeedDb();
