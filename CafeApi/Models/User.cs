@@ -16,12 +16,6 @@ public class User : IEntity
 
     public static User Create(string email, string password, UserRole role, int? customerId = null)
     {
-        if (string.IsNullOrWhiteSpace(email))
-            throw new ArgumentException("Email cannot be empty", nameof(email));
-        
-        if (string.IsNullOrWhiteSpace(password))
-            throw new ArgumentException("Password cannot be empty", nameof(password));
-
         return new User
         {
             Email = email,
@@ -35,7 +29,6 @@ public class User : IEntity
     {
         return BCrypt.Net.BCrypt.Verify(password, PasswordHash);
     }
-    
 
     private static string HashPassword(string password)
     {
