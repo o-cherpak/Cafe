@@ -44,13 +44,7 @@ public class AuthService : IAuthService
             customerId = customerDto.Id;
         }
 
-        var user = new User
-        {
-            Email = dto.Email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-            Role = dto.Role,
-            CustomerId = customerId
-        };
+        var user = User.Create(dto.Email, dto.Password, dto.Role, customerId);
 
         _db.Users.Add(user);
         await _db.SaveChangesAsync();
@@ -63,7 +57,7 @@ public class AuthService : IAuthService
     {
         var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
 
-        if (user is null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+        if (user is null || !user.VerifyPassword(dto.Password))
         {
             throw new UnauthorizedException("Invalid email or password");
         }
