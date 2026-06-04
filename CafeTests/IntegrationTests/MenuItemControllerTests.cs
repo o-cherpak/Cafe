@@ -76,7 +76,7 @@ public class MenuItemControllerTests : IClassFixture<CustomWebApplicationFactory
         createResponse.EnsureSuccessStatusCode();
         var created = await createResponse.Content.ReadFromJsonAsync<MenuItemDto>();
 
-        UpdateMenuItemDto updateDto = new UpdateMenuItemDto(null, 70, null);
+        UpdateMenuItemDto updateDto = new UpdateMenuItemDto(null, 70, null, null, null);
         var putResponse = await _client.PutAsJsonAsync($"/api/menuitem/{created!.Id}", updateDto);
         putResponse.EnsureSuccessStatusCode();
 

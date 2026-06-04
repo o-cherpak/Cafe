@@ -42,11 +42,8 @@ public class OrderServiceTests
         );
 
         _menuList.AddRange(
-            new MenuItem
-            {
-                Name = "Latte", Category = ItemCategory.Beverages, Price = 75
-            },
-            new MenuItem { Name = "Cake", Category = ItemCategory.Food, Price = 50 }
+            MenuItem.Create("Latte", ItemCategory.Beverages, 75, null),
+            MenuItem.Create("Cake", ItemCategory.Food, 50, null)
         );
 
         _promotionList.AddRange(
