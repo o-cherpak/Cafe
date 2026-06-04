@@ -133,10 +133,7 @@ public class OrderService : IOrderService
             _ => total
         };
 
-        promotion.IsUsed = true;
-        promotion.UsedAt = DateTime.UtcNow;
-        
-        promotion.Order = order;
+        promotion.MarkAsUsed(order);
     }
 
     public async Task Update(int id, OrderStatus status)
