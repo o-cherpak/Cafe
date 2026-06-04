@@ -229,13 +229,10 @@ public class OrderServiceTests
         customer!.AddBonusPoints(500);
         await _db.SaveChangesAsync();
 
-        var customerPromotion = new CustomerPromotion
-        {
-            CustomerId = _customerList[0].Id,
-            PromotionId = _promotionList[1].Id,
-            PurchasedAt = DateTime.UtcNow,
-            IsUsed = false
-        };
+        var customerPromotion = CustomerPromotion.Create(
+            _customerList[0].Id,
+            _promotionList[1].Id
+        );
         _db.CustomerPromotions.Add(customerPromotion);
         await _db.SaveChangesAsync();
 
@@ -304,13 +301,10 @@ public class OrderServiceTests
         await _db.SaveChangesAsync();
         var promotion = _promotionList[0];
 
-        var customerPromotion = new CustomerPromotion
-        {
-            CustomerId = _customerList[0].Id,
-            PromotionId = promotion.Id,
-            PurchasedAt = DateTime.UtcNow,
-            IsUsed = false
-        };
+        var customerPromotion = CustomerPromotion.Create(
+            _customerList[0].Id,
+            promotion.Id
+        );
 
         _db.CustomerPromotions.Add(customerPromotion);
         await _db.SaveChangesAsync();
@@ -338,13 +332,13 @@ public class OrderServiceTests
 
         var promotion = _promotionList[0];
 
-        var customerPromotion = new CustomerPromotion
-        {
-            CustomerId = _customerList[0].Id,
-            PromotionId = promotion.Id,
-            PurchasedAt = DateTime.UtcNow,
-            IsUsed = true
-        };
+        var customerPromotion = CustomerPromotion.Create(
+            _customerList[0].Id,
+            promotion.Id
+        );
+        
+        var order = new Order { CustomerId = _customerList[0].Id };
+        customerPromotion.MarkAsUsed(order);
 
         _db.CustomerPromotions.Add(customerPromotion);
         await _db.SaveChangesAsync();
@@ -374,13 +368,10 @@ public class OrderServiceTests
         _db.Promotions.Add(promotion);
         await _db.SaveChangesAsync();
 
-        var customerPromotion = new CustomerPromotion
-        {
-            CustomerId = _customerList[0].Id,
-            PromotionId = promotion.Id,
-            PurchasedAt = DateTime.UtcNow,
-            IsUsed = false
-        };
+        var customerPromotion = CustomerPromotion.Create(
+            _customerList[0].Id,
+            promotion.Id
+        );
         _db.CustomerPromotions.Add(customerPromotion);
         await _db.SaveChangesAsync();
 

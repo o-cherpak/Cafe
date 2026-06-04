@@ -230,7 +230,7 @@ public class CustomerPromotionServiceTests
         await _db.SaveChangesAsync();
 
         var customerPromo = await _db.CustomerPromotions.FindAsync(bought.Id);
-        customerPromo!.UsedInOrderId = order.Id;
+        customerPromo!.MarkAsUsed(order);
         await _db.SaveChangesAsync();
 
         var result = await _service.GetByOrderAsync(order.Id);
