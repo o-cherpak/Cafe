@@ -16,7 +16,7 @@ public class PromotionService : IPromotionService
         _uow = uow;
         _mapper = mapper;
     }
-    
+
     public async Task<PromotionDto> GetById(int id)
     {
         var promotion = await _uow.Promotions.GetByIdAsync(id);
@@ -42,15 +42,13 @@ public class PromotionService : IPromotionService
 
     public async Task<PromotionDto> Create(CreatePromotionDto dto)
     {
-        var promotion = new Promotion
-        {
-            Name = dto.Name,
-            Description = dto.Description,
-            DiscountType = dto.DiscountType,
-            DiscountValue = dto.DiscountValue,
-            BonusCost = dto.BonusCost,
-            IsActive = true
-        };
+        var promotion = Promotion.Create(
+            dto.Name,
+            dto.Description,
+            dto.DiscountType,
+            dto.DiscountValue,
+            dto.BonusCost
+        );
 
         await _uow.Promotions.AddAsync(promotion);
         await _uow.SaveChangesAsync();
@@ -64,10 +62,7 @@ public class PromotionService : IPromotionService
 
         if (promotion is null) throw new PromotionNotFound($"Promotion with {id} id not found");
 
-        if (dto.IsActive is not null) promotion.IsActive = dto.IsActive.Value;
-        if (dto.Description is not null) promotion.Description = dto.Description;
-        if (dto.DiscountValue is not null) promotion.DiscountValue = dto.DiscountValue.Value;
-        if (dto.Name is not null) promotion.Name = dto.Name;
+        promotion.Update(dto.Name, dto.Description, dto.DiscountValue, dto.IsActive);
 
         await _uow.SaveChangesAsync();
     }
