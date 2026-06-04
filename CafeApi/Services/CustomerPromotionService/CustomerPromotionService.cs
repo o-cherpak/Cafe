@@ -62,12 +62,10 @@ public class CustomerPromotionService : ICustomerPromotionService
 
         customer.SubtractBonusPoints(promotion.BonusCost);
 
-        var newPromotion = new CustomerPromotion
-        {
-            CustomerId = dto.CustomerId,
-            PromotionId = dto.PromotionId,
-            PurchasedAt = DateTime.UtcNow
-        };
+        var newPromotion = CustomerPromotion.Create(
+            dto.CustomerId,
+            dto.PromotionId
+        );
 
         _uow.Customers.Update(customer);
 
