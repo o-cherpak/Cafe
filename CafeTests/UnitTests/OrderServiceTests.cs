@@ -37,47 +37,30 @@ public class OrderServiceTests
     private async Task Seed()
     {
         _customerList.AddRange(
-            new Customer
-            {
-                Name = "User",
-                Email = "test@test.com",
-                BonusPoints = 0,
-                RegisteredAt = DateTime.UtcNow
-            },
-            new Customer
-            {
-                Name = "User2",
-                Email = "test@test2.com",
-                BonusPoints = 0,
-                RegisteredAt = DateTime.UtcNow
-            }
+            Customer.Create("User", "test@test.com"),
+            Customer.Create("User2", "test@test2.com")
         );
 
         _menuList.AddRange(
-            new MenuItem
-            {
-                Name = "Latte", Category = ItemCategory.Beverages, Price = 75
-            },
-            new MenuItem { Name = "Cake", Category = ItemCategory.Food, Price = 50 }
+            MenuItem.Create("Latte", ItemCategory.Beverages, 75, null),
+            MenuItem.Create("Cake", ItemCategory.Food, 50, null)
         );
 
         _promotionList.AddRange(
-            new Promotion
-            {
-                Name = "20 Off",
-                BonusCost = 100,
-                DiscountType = DiscountType.FixedAmount,
-                DiscountValue = 20,
-                IsActive = true
-            },
-            new Promotion
-            {
-                Name = "10%",
-                BonusCost = 100,
-                DiscountType = DiscountType.Percentage,
-                DiscountValue = 10,
-                IsActive = true
-            }
+            Promotion.Create(
+                "20 Off",
+                null,
+                DiscountType.FixedAmount,
+                20,
+                100
+            ),
+            Promotion.Create(
+                "10%",
+                null,
+                DiscountType.Percentage,
+                10,
+                100
+            )
         );
 
         _db.Customers.AddRange(_customerList);
@@ -217,16 +200,16 @@ public class OrderServiceTests
             _customerList[0].Id,
             [new OrderItemDto(_menuList[0].Id, itemQuantity)]
         );
-        
+
         var order = await _service.CreateAsync(dto);
-        
+
         _bonusesService
             .Setup(x => x.Calculate(It.Is<Order>(o => o.Id == order.Id)))
             .Returns(expectedPoints);
 
         await _service.Update(order.Id, OrderStatus.Completed);
 
-        
+
         var updatedOrder = await _service.GetById(order.Id);
 
         var updatedCustomer = await _db.Customers.FindAsync(_customerList[0].Id);
@@ -242,16 +225,14 @@ public class OrderServiceTests
     {
         await Seed();
 
-        _customerList[0].BonusPoints = 500;
+        var customer = await _db.Customers.FindAsync(_customerList[0].Id);
+        customer!.AddBonusPoints(500);
         await _db.SaveChangesAsync();
 
-        var customerPromotion = new CustomerPromotion
-        {
-            CustomerId = _customerList[0].Id,
-            PromotionId = _promotionList[1].Id,
-            PurchasedAt = DateTime.UtcNow,
-            IsUsed = false
-        };
+        var customerPromotion = CustomerPromotion.Create(
+            _customerList[0].Id,
+            _promotionList[1].Id
+        );
         _db.CustomerPromotions.Add(customerPromotion);
         await _db.SaveChangesAsync();
 
@@ -315,17 +296,15 @@ public class OrderServiceTests
     {
         await Seed();
 
-        _customerList[0].BonusPoints = 500;
+        var customer = await _db.Customers.FindAsync(_customerList[0].Id);
+        customer!.AddBonusPoints(500);
         await _db.SaveChangesAsync();
         var promotion = _promotionList[0];
 
-        var customerPromotion = new CustomerPromotion
-        {
-            CustomerId = _customerList[0].Id,
-            PromotionId = promotion.Id,
-            PurchasedAt = DateTime.UtcNow,
-            IsUsed = false
-        };
+        var customerPromotion = CustomerPromotion.Create(
+            _customerList[0].Id,
+            promotion.Id
+        );
 
         _db.CustomerPromotions.Add(customerPromotion);
         await _db.SaveChangesAsync();
@@ -353,13 +332,13 @@ public class OrderServiceTests
 
         var promotion = _promotionList[0];
 
-        var customerPromotion = new CustomerPromotion
-        {
-            CustomerId = _customerList[0].Id,
-            PromotionId = promotion.Id,
-            PurchasedAt = DateTime.UtcNow,
-            IsUsed = true
-        };
+        var customerPromotion = CustomerPromotion.Create(
+            _customerList[0].Id,
+            promotion.Id
+        );
+        
+        var order = Order.Create(_customerList[0].Id, new List<OrderItem>());
+        customerPromotion.MarkAsUsed(order);
 
         _db.CustomerPromotions.Add(customerPromotion);
         await _db.SaveChangesAsync();
@@ -379,24 +358,20 @@ public class OrderServiceTests
     {
         await Seed();
 
-        var promotion = new Promotion
-        {
-            Name = "1000 Off",
-            BonusCost = 100,
-            DiscountType = DiscountType.FixedAmount,
-            DiscountValue = 1000,
-            IsActive = true
-        };
+        var promotion = Promotion.Create(
+            "1000 Off",
+            null,
+            DiscountType.FixedAmount,
+            1000,
+            100
+        );
         _db.Promotions.Add(promotion);
         await _db.SaveChangesAsync();
 
-        var customerPromotion = new CustomerPromotion
-        {
-            CustomerId = _customerList[0].Id,
-            PromotionId = promotion.Id,
-            PurchasedAt = DateTime.UtcNow,
-            IsUsed = false
-        };
+        var customerPromotion = CustomerPromotion.Create(
+            _customerList[0].Id,
+            promotion.Id
+        );
         _db.CustomerPromotions.Add(customerPromotion);
         await _db.SaveChangesAsync();
 
@@ -420,7 +395,7 @@ public class OrderServiceTests
             _customerList[0].Id,
             [new OrderItemDto(_menuList[0].Id, 1)]
         );
-        
+
         await Assert.ThrowsAsync<CustomerNotFound>(() =>
             _service.CreateAsync(dto, _promotionList[0].Id)
         );

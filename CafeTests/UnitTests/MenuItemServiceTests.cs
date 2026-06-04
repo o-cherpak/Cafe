@@ -16,6 +16,7 @@ public class MenuItemServiceTests
 {
     private readonly CafeDbContext _db;
     private readonly MenuItemService _service;
+    private readonly List<MenuItem> _menuItems = [];
 
     public MenuItemServiceTests()
     {
@@ -25,67 +26,77 @@ public class MenuItemServiceTests
         var mapper = TestMapperFactory.Create();
         _service = new MenuItemService(uow, mapper);
     }
-    
+
+    private async Task Seed()
+    {
+        _menuItems.AddRange(
+            MenuItem.Create(
+                "Latte",
+                ItemCategory.Beverages,
+                75,
+                "Milk coffee"
+            ),
+            MenuItem.Create(
+                "Espresso",
+                ItemCategory.Beverages,
+                45,
+                "Strong coffee"
+            ),
+            MenuItem.Create(
+                "Cake",
+                ItemCategory.Food,
+                50,
+                "Sweet dessert"
+            ),
+            MenuItem.Create(
+                "Sandwich",
+                ItemCategory.Food,
+                65,
+                "Tuna sandwich"
+            )
+        );
+
+        _db.MenuItems.AddRange(_menuItems);
+        await _db.SaveChangesAsync();
+    }
+
     [Fact]
     public async Task GetAllTest()
     {
-        _db.MenuItems.AddRange(
-            new MenuItem { Name = "Latte", Category = ItemCategory.Beverages, Price = 75 },
-            new MenuItem { Name = "Cake", Category = ItemCategory.Food, Price = 50 }
-        );
-
-        await _db.SaveChangesAsync();
+        await Seed();
 
         var result = await _service.GetAll(null);
 
-        result.Should().HaveCount(2);
+        result.Should().HaveCount(4);
     }
 
     [Fact]
     public async Task GetAllWithFilterTest()
     {
-        _db.MenuItems.AddRange(
-            new MenuItem { Name = "Latte", Category = ItemCategory.Beverages, Price = 75 },
-            new MenuItem { Name = "Cake1", Category = ItemCategory.Food, Price = 50 },
-            new MenuItem { Name = "Cake2", Category = ItemCategory.Food, Price = 51 },
-            new MenuItem { Name = "Cake3", Category = ItemCategory.Food, Price = 52 }
-        );
-
-        await _db.SaveChangesAsync();
+        await Seed();
 
         var result1 = await _service.GetAll(ItemCategory.Food);
         var result2 = await _service.GetAll(ItemCategory.Beverages);
 
-        result1.Should().HaveCount(3);
-        result2.Should().HaveCount(1);
+        result1.Should().HaveCount(2);
+        result2.Should().HaveCount(2);
     }
 
     [Fact]
     public async Task GetByIdTest()
     {
-        _db.MenuItems.AddRange(
-            new MenuItem { Name = "Latte", Category = ItemCategory.Beverages, Price = 75 },
-            new MenuItem { Name = "Cake", Category = ItemCategory.Food, Price = 50 }
-        );
+        await Seed();
 
-        await _db.SaveChangesAsync();
+        var result1 = await _service.GetById(_menuItems[0].Id);
+        var result2 = await _service.GetById(_menuItems[2].Id);
 
-        var result1 = await _service.GetById(1);
-        var result2 = await _service.GetById(2);
+        result1.Name.Should().Be("Latte");
+        result1.Category.Should().Be(ItemCategory.Beverages);
+        result1.Price.Should().Be(75);
 
-        result1.Should().BeEquivalentTo(new
-        {
-            Name = "Latte",
-            Category = ItemCategory.Beverages,
-            Price = 75
-        });
-
-        result2.Should().BeEquivalentTo(new
-        {
-            Name = "Cake",
-            Category = ItemCategory.Food,
-            Price = 50
-        });
+        result2.Name.Should().Be("Cake");
+        result2.Category.Should().Be(ItemCategory.Food);
+        result2.Price.Should().Be(50);
     }
 
     [Fact]
@@ -97,8 +108,18 @@ public class MenuItemServiceTests
     [Fact]
     public async Task CreateTest()
     {
-        var dto1 = new CreateMenuItemDto("Espresso", ItemCategory.Beverages, 45, null);
-        var dto2 = new CreateMenuItemDto("Latte", ItemCategory.Beverages, 70, "Very tasty");
+        var dto1 = new CreateMenuItemDto(
+            "Espresso",
+            ItemCategory.Beverages,
+            45,
+            null
+        );
+        var dto2 = new CreateMenuItemDto(
+            "Latte",
+            ItemCategory.Beverages,
+            70,
+            "Very tasty"
+        );
 
         var result1 = await _service.Create(dto1);
         var result2 = await _service.Create(dto2);
@@ -110,24 +131,34 @@ public class MenuItemServiceTests
         result2.Price.Should().Be(70);
         _db.MenuItems.Should().HaveCount(2);
     }
-    
+
     [Fact]
     public async Task Validator_InvalidPriceTest()
     {
         var validator = new CreateMenuItemValidator();
-        var dto = new CreateMenuItemDto("Espresso", ItemCategory.Beverages, 0, null);
+        var dto = new CreateMenuItemDto(
+            "Espresso",
+            ItemCategory.Beverages,
+            0,
+            null
+        );
 
         var result = await validator.ValidateAsync(dto);
 
         result.IsValid.Should().BeFalse();
         result.Errors.Should().Contain(e => e.PropertyName == "Price");
     }
-    
+
     [Fact]
     public async Task Validator_EmptyNameTest()
     {
         var validator = new CreateMenuItemValidator();
-        var dto = new CreateMenuItemDto("", ItemCategory.Beverages, 45, null);
+        var dto = new CreateMenuItemDto(
+            "",
+            ItemCategory.Beverages,
+            45,
+            null
+        );
 
         var result = await validator.ValidateAsync(dto);
 
@@ -138,47 +169,57 @@ public class MenuItemServiceTests
     [Fact]
     public async Task UpdateTest()
     {
-        _db.MenuItems.AddRange(
-            new MenuItem { Name = "New Latte", Category = ItemCategory.Beverages, Price = 70 },
-            new MenuItem { Name = "Cake", Category = ItemCategory.Food, Price = 45 }
+        await Seed();
+
+        await _service.Update(
+            _menuItems[0].Id,
+            new UpdateMenuItemDto(
+                "New Latte",
+                80,
+                true,
+                null,
+                null
+            )
+        );
+        await _service.Update(
+            _menuItems[2].Id,
+            new UpdateMenuItemDto(
+                "New Cake",
+                55,
+                false,
+                null,
+                null
+            )
         );
 
-        await _db.SaveChangesAsync();
+        var result1 = await _service.GetById(_menuItems[0].Id);
+        var result2 = await _service.GetById(_menuItems[2].Id);
 
-        await _service.Update(1, new UpdateMenuItemDto("Latte", 70, true));
-        await _service.Update(2, new UpdateMenuItemDto("Cake", 50, false));
+        result1.Name.Should().Be("New Latte");
+        result1.Price.Should().Be(80);
+        result1.IsAvailable.Should().BeTrue();
 
-        var result1 = await _service.GetById(1);
-        var result2 = await _service.GetById(2);
-
-        _db.MenuItems.Should().HaveCount(2);
-
-        result1.Should().BeEquivalentTo(new
-        {
-            Name = "Latte",
-            Category = ItemCategory.Beverages,
-            Price = 70,
-            IsAvailable = true
-        });
-
-        result2.Should().BeEquivalentTo(new
-        {
-            Name = "Cake",
-            Category = ItemCategory.Food,
-            Price = 50,
-            IsAvailable = false
-        });
+        result2.Name.Should().Be("New Cake");
+        result2.Price.Should().Be(55);
+        result2.IsAvailable.Should().BeFalse();
     }
-    
+
     [Fact]
     public async Task Validator_UpdateInvalidPriceTest()
     {
         var validator = new UpdateMenuItemValidator();
-        var dto = new UpdateMenuItemDto(null, -10, null);
+        var dto = new UpdateMenuItemDto(
+            null,
+            -10,
+            null,
+            null,
+            null
+        );
 
         var result = await validator.ValidateAsync(dto);
 
         result.IsValid.Should().BeFalse();
+
         result.Errors.Should().Contain(e => e.PropertyName == "Price");
     }
 
@@ -186,7 +227,13 @@ public class MenuItemServiceTests
     public async Task Validator_UpdateNoErrorsTest()
     {
         var validator = new UpdateMenuItemValidator();
-        var dto = new UpdateMenuItemDto("New Latte", 80, true);
+        var dto = new UpdateMenuItemDto(
+            "New Latte",
+            80,
+            true,
+            null,
+            null
+        );
 
         var result = await validator.ValidateAsync(dto);
 
@@ -196,19 +243,11 @@ public class MenuItemServiceTests
     [Fact]
     public async Task DeleteTest()
     {
-        _db.MenuItems.AddRange(
-            new MenuItem { Name = "Latte", Category = ItemCategory.Beverages, Price = 75 },
-            new MenuItem { Name = "Cake1", Category = ItemCategory.Food, Price = 50 },
-            new MenuItem { Name = "Cake2", Category = ItemCategory.Food, Price = 51 },
-            new MenuItem { Name = "Cake3", Category = ItemCategory.Food, Price = 52 }
-        );
+        await Seed();
 
-        await _db.SaveChangesAsync();
-
-        await _service.Delete(1);
+        await _service.Delete(_menuItems[0].Id);
 
         _db.MenuItems.Should().HaveCount(3);
-
         _db.MenuItems.Should().NotContain(m => m.Name == "Latte");
     }
 }

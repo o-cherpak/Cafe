@@ -7,6 +7,7 @@ public record MenuItemDto(
     string Name,
     ItemCategory Category,
     decimal Price,
+    string Description,
     bool IsAvailable
 );
 
@@ -17,4 +18,10 @@ public record CreateMenuItemDto(
     string? Description
 );
 
-public record UpdateMenuItemDto(string? Name, decimal? Price, bool? IsAvailable);
+public record UpdateMenuItemDto(
+    string? Name,
+    decimal? Price,
+    bool? IsAvailable,
+    ItemCategory? Category,
+    string? Description
+);

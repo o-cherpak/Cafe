@@ -28,22 +28,8 @@ public class PromotionServiceTests
     private async Task Seed()
     {
         _db.Promotions.AddRange(
-            new Promotion
-            {
-                Name = "10%",
-                BonusCost = 100,
-                DiscountType = DiscountType.Percentage,
-                DiscountValue = 10,
-                IsActive = true
-            },
-            new Promotion
-            {
-                Name = "20-Off",
-                BonusCost = 200,
-                DiscountType = DiscountType.FixedAmount,
-                DiscountValue = 20,
-                IsActive = false
-            }
+            Promotion.Create("10%", null, DiscountType.Percentage, 10, 100),
+            Promotion.Create("20-Off", null, DiscountType.FixedAmount, 20, 200, false)
         );
 
         await _db.SaveChangesAsync();
@@ -162,7 +148,7 @@ public class PromotionServiceTests
         result.DiscountValue.Should().Be(15);
         result.IsActive.Should().BeTrue();
     }
-    
+
     [Fact]
     public async Task Validator_UpdateNoErrorsTest()
     {

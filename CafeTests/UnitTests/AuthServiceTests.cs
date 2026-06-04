@@ -42,13 +42,7 @@ public class AuthServiceTests : IDisposable
 
     private async Task SeedDb()
     {
-        _db.Users.Add(new User
-        {
-            Email = "alex@gmail.com",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("123123"),
-            Role = UserRole.Customer,
-            CustomerId = 1
-        });
+        _db.Users.Add(User.Create("alex@gmail.com", "123123", UserRole.Customer, 1));
         await _db.SaveChangesAsync();
     }
 
@@ -68,7 +62,7 @@ public class AuthServiceTests : IDisposable
         result.Token.Should().NotBeNullOrEmpty();
 
         var userInDb = _db.Users.Single(u => u.Email == dto.Email);
-        BCrypt.Net.BCrypt.Verify(dto.Password, userInDb.PasswordHash).Should().BeTrue();
+        userInDb.VerifyPassword(dto.Password).Should().BeTrue();
     }
 
     [Fact]

@@ -26,39 +26,26 @@ public class CustomerPromotionControllerTests : IClassFixture<CustomWebApplicati
         db.Database.EnsureCreated();
 
         _customers.AddRange(
-            new Customer
-            {
-                Name = "Alex",
-                Email = "alex@gmail.com",
-                BonusPoints = 500,
-                RegisteredAt = DateTime.UtcNow
-            },
-            new Customer
-            {
-                Name = "Gabriel",
-                Email = "gabriel@gmail.com",
-                BonusPoints = 50,
-                RegisteredAt = DateTime.UtcNow
-            }
+            Customer.Create("Alex", "alex@gmail.com", 500),
+            Customer.Create("Gabriel", "gabriel@gmail.com", 50)
         );
 
         _promotions.AddRange(
-            new Promotion
-            {
-                Name = "10%",
-                BonusCost = 100,
-                DiscountType = DiscountType.Percentage,
-                DiscountValue = 10,
-                IsActive = true
-            },
-            new Promotion
-            {
-                Name = "Inactive Promo",
-                BonusCost = 100,
-                DiscountType = DiscountType.FixedAmount,
-                DiscountValue = 20,
-                IsActive = false
-            }
+            Promotion.Create(
+                "10%",
+                null,
+                DiscountType.Percentage,
+                10,
+                100
+            ),
+            Promotion.Create(
+                "Inactive Promo",
+                null,
+                DiscountType.FixedAmount,
+                20,
+                100,
+                false
+            )
         );
 
         db.Customers.AddRange(_customers);

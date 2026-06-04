@@ -25,28 +25,23 @@ public class OrderControllerTests : IClassFixture<CustomWebApplicationFactory>
         db.Database.EnsureDeleted();
 
         _customerList.AddRange(
-            new Customer
-            {
-                Name = "User",
-                Email = "test@test.com",
-                BonusPoints = 0,
-                RegisteredAt = DateTime.UtcNow
-            },
-            new Customer
-            {
-                Name = "User2",
-                Email = "test@test2.com",
-                BonusPoints = 0,
-                RegisteredAt = DateTime.UtcNow
-            }
+            Customer.Create("User", "test@test.com"),
+            Customer.Create("User2", "test@test2.com")
         );
 
         _menuList.AddRange(
-            new MenuItem
-            {
-                Name = "Latte", Category = ItemCategory.Beverages, Price = 75
-            },
-            new MenuItem { Name = "Cake", Category = ItemCategory.Food, Price = 50 }
+            MenuItem.Create(
+                "Latte",
+                ItemCategory.Beverages,
+                75,
+                null
+            ),
+            MenuItem.Create(
+                "Cake",
+                ItemCategory.Food,
+                50,
+                null
+            )
         );
 
         db.Customers.AddRange(_customerList);
@@ -153,7 +148,11 @@ public class OrderControllerTests : IClassFixture<CustomWebApplicationFactory>
         createResponse.EnsureSuccessStatusCode();
         var created = await createResponse.Content.ReadFromJsonAsync<OrderResponseDto>();
 
-        var putResponse = await _client.PutAsJsonAsync($"/api/order/{created!.Id}", OrderStatus.Completed);
+        var putResponse = await _client.PutAsJsonAsync(
+            $"/api/order/{created!.Id}",
+            OrderStatus.Completed
+        );
+
         putResponse.EnsureSuccessStatusCode();
 
         var getResponse = await _client.GetAsync($"/api/order/{created.Id}");

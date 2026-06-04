@@ -44,13 +44,12 @@ public class MenuItemService : IMenuItemService
 
     public async Task<MenuItemDto> Create(CreateMenuItemDto dto)
     {
-        var item = new MenuItem
-        {
-            Name = dto.Name,
-            Category = dto.Category,
-            Price = dto.Price,
-            Description = dto.Description
-        };
+        var item = MenuItem.Create(
+            dto.Name,
+            dto.Category,
+            dto.Price,
+            dto.Description
+        );
 
         await _uow.MenuItems.AddAsync(item);
         await _uow.SaveChangesAsync();
@@ -60,16 +59,20 @@ public class MenuItemService : IMenuItemService
 
     public async Task Update(int id, UpdateMenuItemDto dto)
     {
-        var item = await _uow.MenuItems.GetByIdAsync(id);
+        var menuItem = await _uow.MenuItems.GetByIdAsync(id);
 
-        if (item is null)
+        if (menuItem is null)
             throw new MenuItemNotFound($"MenuItem with {id} id not found");
 
-        if (dto.Name is not null) item.Name = dto.Name;
-        if (dto.Price is not null) item.Price = dto.Price.Value;
-        if (dto.IsAvailable is not null) item.IsAvailable = dto.IsAvailable.Value;
+        menuItem.Update(
+            dto.Name,
+            dto.Price,
+            dto.IsAvailable,
+            dto.Category,
+            dto.Description
+        );
 
-        _uow.MenuItems.Update(item);
+        _uow.MenuItems.Update(menuItem);
         await _uow.SaveChangesAsync();
     }
 
@@ -78,7 +81,7 @@ public class MenuItemService : IMenuItemService
         var item = await _uow.MenuItems.GetByIdAsync(id);
 
         if (item is null) throw new MenuItemNotFound($"MenuItem with {id} id not found");
-        
+
 
         _uow.MenuItems.Delete(item);
         await _uow.SaveChangesAsync();
