@@ -60,10 +60,7 @@ public class CustomerPromotionService : ICustomerPromotionService
         if (existing is not null)
             throw new ConflictException("Customer already owns this promotion");
 
-        if (customer.BonusPoints < promotion.BonusCost)
-            throw new InsufficientBonusException(
-                $"Not enough bonus points. Required: {promotion.BonusCost}, available: {customer.BonusPoints}"
-            );
+        customer.SubtractBonusPoints(promotion.BonusCost);
 
         var newPromotion = new CustomerPromotion
         {
@@ -72,7 +69,6 @@ public class CustomerPromotionService : ICustomerPromotionService
             PurchasedAt = DateTime.UtcNow
         };
 
-        customer.BonusPoints -= promotion.BonusCost;
         _uow.Customers.Update(customer);
 
         await _uow.CustomerPromotions.AddAsync(newPromotion);

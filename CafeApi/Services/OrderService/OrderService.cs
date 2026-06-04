@@ -148,7 +148,7 @@ public class OrderService : IOrderService
 
         if (order.Status != OrderStatus.Completed && status == OrderStatus.Completed)
         {
-            order.Customer.BonusPoints += _bonusesService.Calculate(order);
+            order.Customer.AddBonusPoints(_bonusesService.Calculate(order));
         }
 
         order.Status = status;
