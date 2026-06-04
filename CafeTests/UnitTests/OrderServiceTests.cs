@@ -62,22 +62,20 @@ public class OrderServiceTests
         );
 
         _promotionList.AddRange(
-            new Promotion
-            {
-                Name = "20 Off",
-                BonusCost = 100,
-                DiscountType = DiscountType.FixedAmount,
-                DiscountValue = 20,
-                IsActive = true
-            },
-            new Promotion
-            {
-                Name = "10%",
-                BonusCost = 100,
-                DiscountType = DiscountType.Percentage,
-                DiscountValue = 10,
-                IsActive = true
-            }
+            Promotion.Create(
+                "20 Off",
+                null,
+                DiscountType.FixedAmount,
+                20,
+                100
+            ),
+            Promotion.Create(
+                "10%",
+                null,
+                DiscountType.Percentage,
+                10,
+                100
+            )
         );
 
         _db.Customers.AddRange(_customerList);
@@ -217,16 +215,16 @@ public class OrderServiceTests
             _customerList[0].Id,
             [new OrderItemDto(_menuList[0].Id, itemQuantity)]
         );
-        
+
         var order = await _service.CreateAsync(dto);
-        
+
         _bonusesService
             .Setup(x => x.Calculate(It.Is<Order>(o => o.Id == order.Id)))
             .Returns(expectedPoints);
 
         await _service.Update(order.Id, OrderStatus.Completed);
 
-        
+
         var updatedOrder = await _service.GetById(order.Id);
 
         var updatedCustomer = await _db.Customers.FindAsync(_customerList[0].Id);
@@ -379,14 +377,13 @@ public class OrderServiceTests
     {
         await Seed();
 
-        var promotion = new Promotion
-        {
-            Name = "1000 Off",
-            BonusCost = 100,
-            DiscountType = DiscountType.FixedAmount,
-            DiscountValue = 1000,
-            IsActive = true
-        };
+        var promotion = Promotion.Create(
+            "1000 Off",
+            null,
+            DiscountType.FixedAmount,
+            1000,
+            100
+        );
         _db.Promotions.Add(promotion);
         await _db.SaveChangesAsync();
 
@@ -420,7 +417,7 @@ public class OrderServiceTests
             _customerList[0].Id,
             [new OrderItemDto(_menuList[0].Id, 1)]
         );
-        
+
         await Assert.ThrowsAsync<CustomerNotFound>(() =>
             _service.CreateAsync(dto, _promotionList[0].Id)
         );

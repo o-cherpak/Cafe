@@ -47,22 +47,22 @@ public class CustomerPromotionServiceTests
         );
 
         _promotions.AddRange(
-            new Promotion
-            {
-                Name = "10% Off",
-                BonusCost = 100,
-                DiscountType = DiscountType.Percentage,
-                DiscountValue = 10,
-                IsActive = true
-            },
-            new Promotion
-            {
-                Name = "Inactive Promo",
-                BonusCost = 100,
-                DiscountType = DiscountType.FixedAmount,
-                DiscountValue = 20,
-                IsActive = false
-            }
+            Promotion.Create(
+                "10% Off",
+                null,
+                DiscountType.Percentage,
+                10,
+                100,
+                true
+            ),
+            Promotion.Create(
+                "Inactive Promo",
+                null,
+                DiscountType.FixedAmount,
+                20,
+                100,
+                false
+            )
         );
 
         _db.Customers.AddRange(_customers);
@@ -126,8 +126,8 @@ public class CustomerPromotionServiceTests
     {
         await Seed();
 
-        await Assert.ThrowsAsync<CustomerNotFound>(
-            () => _service.BuyPromotion(new BuyPromotionDto(99999, _promotions[0].Id))
+        await Assert.ThrowsAsync<CustomerNotFound>(() =>
+            _service.BuyPromotion(new BuyPromotionDto(99999, _promotions[0].Id))
         );
     }
 
@@ -136,8 +136,8 @@ public class CustomerPromotionServiceTests
     {
         await Seed();
 
-        await Assert.ThrowsAsync<PromotionNotFound>(
-            () => _service.BuyPromotion(new BuyPromotionDto(_customers[0].Id, 99999))
+        await Assert.ThrowsAsync<PromotionNotFound>(() =>
+            _service.BuyPromotion(new BuyPromotionDto(_customers[0].Id, 99999))
         );
     }
 
@@ -146,8 +146,8 @@ public class CustomerPromotionServiceTests
     {
         await Seed();
 
-        await Assert.ThrowsAsync<PromotionNotActiveException>(
-            () => _service.BuyPromotion(new BuyPromotionDto(_customers[0].Id, _promotions[1].Id))
+        await Assert.ThrowsAsync<PromotionNotActiveException>(() =>
+            _service.BuyPromotion(new BuyPromotionDto(_customers[0].Id, _promotions[1].Id))
         );
     }
 
@@ -158,8 +158,8 @@ public class CustomerPromotionServiceTests
 
         await _service.BuyPromotion(new BuyPromotionDto(_customers[0].Id, _promotions[0].Id));
 
-        await Assert.ThrowsAsync<ConflictException>(
-            () => _service.BuyPromotion(new BuyPromotionDto(_customers[0].Id, _promotions[0].Id))
+        await Assert.ThrowsAsync<ConflictException>(() =>
+            _service.BuyPromotion(new BuyPromotionDto(_customers[0].Id, _promotions[0].Id))
         );
     }
 
@@ -167,9 +167,9 @@ public class CustomerPromotionServiceTests
     public async Task BuyPromotion_InsufficientBonusTest()
     {
         await Seed();
-        
-        await Assert.ThrowsAsync<InsufficientBonusException>(
-            () => _service.BuyPromotion(new BuyPromotionDto(_customers[1].Id, _promotions[0].Id))
+
+        await Assert.ThrowsAsync<InsufficientBonusException>(() =>
+            _service.BuyPromotion(new BuyPromotionDto(_customers[1].Id, _promotions[0].Id))
         );
     }
 
@@ -181,7 +181,7 @@ public class CustomerPromotionServiceTests
         await _service.BuyPromotion(new BuyPromotionDto(_customers[0].Id, _promotions[0].Id));
 
         var result = await _service.GetByCustomerIdAsync(_customers[0].Id);
-        
+
         result.Should().HaveCount(1);
         result.Should().AllSatisfy(p => p.CustomerId.Should().Be(_customers[0].Id));
     }
@@ -205,7 +205,7 @@ public class CustomerPromotionServiceTests
     public async Task GetByCustomerAndPromotion_CustomerNotFoundTest()
     {
         await Seed();
-        await Assert.ThrowsAsync<CustomerNotFound>(() => 
+        await Assert.ThrowsAsync<CustomerNotFound>(() =>
             _service.GetByCustomerAndPromotionAsync(99999, _promotions[0].Id));
     }
 
@@ -213,7 +213,7 @@ public class CustomerPromotionServiceTests
     public async Task GetByCustomerAndPromotion_PromotionNotFoundTest()
     {
         await Seed();
-        await Assert.ThrowsAsync<PromotionNotFound>(() => 
+        await Assert.ThrowsAsync<PromotionNotFound>(() =>
             _service.GetByCustomerAndPromotionAsync(_customers[0].Id, 99999));
     }
 
@@ -221,7 +221,7 @@ public class CustomerPromotionServiceTests
     public async Task GetByCustomerAndPromotion_CustomerPromotionNotFoundTest()
     {
         await Seed();
-        await Assert.ThrowsAsync<CustomerPromotionNotFound>(() => 
+        await Assert.ThrowsAsync<CustomerPromotionNotFound>(() =>
             _service.GetByCustomerAndPromotionAsync(_customers[0].Id, _promotions[0].Id));
     }
 
