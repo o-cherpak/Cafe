@@ -50,13 +50,7 @@ public class CustomerService : ICustomerService
         if (customer is not null)
             throw new ConflictException($"Customer with this {dto.Email} email already exists");
 
-        var newCustomer = new Customer
-        {
-            Name = dto.Name,
-            Email = dto.Email,
-            BonusPoints = 0,
-            RegisteredAt = DateTime.UtcNow,
-        };
+        var newCustomer = Customer.Create(dto.Name, dto.Email);
 
         await _uow.Customers.AddAsync(newCustomer);
         await _uow.SaveChangesAsync();
@@ -66,12 +60,13 @@ public class CustomerService : ICustomerService
 
     public async Task Update(int id, UpdateCustomerDto dto)
     {
-        var item = await _uow.Customers.GetByIdAsync(id);
+        var customer = await _uow.Customers.GetByIdAsync(id);
+        var existing = await _uow.Customers.GetCustomerByEmailAsync(dto.Email);
+        if (existing is not null) 
+            throw new ConflictException($"Customer with email {dto.Email} already exists");
 
-        if (item is null) throw new CustomerNotFound($"Customer with {id} id not found");
-
-        if (dto.Name is not null) item.Name = dto.Name;
-        if (dto.Email is not null) item.Email = dto.Email;
+        if (customer is null) throw new CustomerNotFound($"Customer with {id} id not found");
+        customer.Update(dto.Name, dto.Email);
 
         await _uow.SaveChangesAsync();
     }
