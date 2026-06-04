@@ -217,15 +217,13 @@ public class CustomerPromotionServiceTests
     public async Task GetByOrderAsyncTest()
     {
         await Seed();
-        var bought = await _service.BuyPromotion(new BuyPromotionDto(_customers[0].Id, _promotions[0].Id));
-        
-        var order = new Order
-        {
-            CustomerId = _customers[0].Id,
-            CreatedAt = DateTime.UtcNow,
-            Status = OrderStatus.Completed,
-            FinalTotal = 100
-        };
+        var bought = await _service.BuyPromotion(
+            new BuyPromotionDto(_customers[0].Id, _promotions[0].Id)
+        );
+
+        var order = Order.Create(_customers[0].Id, new List<OrderItem>());
+        order.UpdateStatus(OrderStatus.Completed);
+
         _db.Orders.Add(order);
         await _db.SaveChangesAsync();
 
@@ -249,13 +247,9 @@ public class CustomerPromotionServiceTests
     public async Task GetByOrderAsync_CustomerPromotionNotFoundTest()
     {
         await Seed();
-        var order = new Order
-        {
-            CustomerId = _customers[0].Id,
-            CreatedAt = DateTime.UtcNow,
-            Status = OrderStatus.Completed,
-            FinalTotal = 100
-        };
+        var order = Order.Create(_customers[0].Id, new List<OrderItem>());
+        order.UpdateStatus(OrderStatus.Completed);
+
         _db.Orders.Add(order);
         await _db.SaveChangesAsync();
 

@@ -337,7 +337,7 @@ public class OrderServiceTests
             promotion.Id
         );
         
-        var order = new Order { CustomerId = _customerList[0].Id };
+        var order = Order.Create(_customerList[0].Id, new List<OrderItem>());
         customerPromotion.MarkAsUsed(order);
 
         _db.CustomerPromotions.Add(customerPromotion);
