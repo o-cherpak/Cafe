@@ -37,20 +37,8 @@ public class OrderServiceTests
     private async Task Seed()
     {
         _customerList.AddRange(
-            new Customer
-            {
-                Name = "User",
-                Email = "test@test.com",
-                BonusPoints = 0,
-                RegisteredAt = DateTime.UtcNow
-            },
-            new Customer
-            {
-                Name = "User2",
-                Email = "test@test2.com",
-                BonusPoints = 0,
-                RegisteredAt = DateTime.UtcNow
-            }
+            Customer.Create("User", "test@test.com"),
+            Customer.Create("User2", "test@test2.com")
         );
 
         _menuList.AddRange(
@@ -240,7 +228,8 @@ public class OrderServiceTests
     {
         await Seed();
 
-        _customerList[0].BonusPoints = 500;
+        var customer = await _db.Customers.FindAsync(_customerList[0].Id);
+        customer!.AddBonusPoints(500);
         await _db.SaveChangesAsync();
 
         var customerPromotion = new CustomerPromotion
@@ -313,7 +302,8 @@ public class OrderServiceTests
     {
         await Seed();
 
-        _customerList[0].BonusPoints = 500;
+        var customer = await _db.Customers.FindAsync(_customerList[0].Id);
+        customer!.AddBonusPoints(500);
         await _db.SaveChangesAsync();
         var promotion = _promotionList[0];
 

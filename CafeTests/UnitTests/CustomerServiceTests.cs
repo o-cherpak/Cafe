@@ -28,9 +28,9 @@ public class CustomerServiceTests
     private async Task SeedDb()
     {
         _db.AddRange(
-            new Customer { Name = "Alex", Email = "emailC.com" },
-            new Customer { Name = "Gabriel", Email = "emailB.com" },
-            new Customer { Name = "Artur", Email = "emailA.com" }
+            Customer.Create("Alex", "emailC.com"),
+            Customer.Create("Gabriel", "emailB.com"),
+            Customer.Create("Artur", "emailA.com")
         );
 
         await _db.SaveChangesAsync();

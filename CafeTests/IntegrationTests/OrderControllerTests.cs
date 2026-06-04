@@ -25,20 +25,8 @@ public class OrderControllerTests : IClassFixture<CustomWebApplicationFactory>
         db.Database.EnsureDeleted();
 
         _customerList.AddRange(
-            new Customer
-            {
-                Name = "User",
-                Email = "test@test.com",
-                BonusPoints = 0,
-                RegisteredAt = DateTime.UtcNow
-            },
-            new Customer
-            {
-                Name = "User2",
-                Email = "test@test2.com",
-                BonusPoints = 0,
-                RegisteredAt = DateTime.UtcNow
-            }
+            Customer.Create("User", "test@test.com"),
+            Customer.Create("User2", "test@test2.com")
         );
 
         _menuList.AddRange(

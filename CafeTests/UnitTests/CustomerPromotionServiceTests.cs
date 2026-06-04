@@ -30,20 +30,8 @@ public class CustomerPromotionServiceTests
     private async Task Seed()
     {
         _customers.AddRange(
-            new Customer
-            {
-                Name = "Alex",
-                Email = "alex@gmail.com",
-                BonusPoints = 500,
-                RegisteredAt = DateTime.UtcNow
-            },
-            new Customer
-            {
-                Name = "Gabriel",
-                Email = "gabriel@gmail.com",
-                BonusPoints = 50,
-                RegisteredAt = DateTime.UtcNow
-            }
+            Customer.Create("Alex", "alex@gmail.com", 500),
+            Customer.Create("Gabriel", "gabriel@gmail.com", 50)
         );
 
         _promotions.AddRange(
