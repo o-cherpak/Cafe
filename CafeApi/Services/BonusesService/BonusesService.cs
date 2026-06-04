@@ -8,9 +8,7 @@ public class BonusesService : IBonusesService
 
     public int Calculate(Order order)
     {
-        var total = order.Items.Sum(i => i.UnitPrice * i.Quantity);
-        
-        var bonusPoints = (int)(total * 10 * Multiplier);
+        var bonusPoints = (int)(order.FinalTotal * 10 * Multiplier);
         return bonusPoints;
     }
 }

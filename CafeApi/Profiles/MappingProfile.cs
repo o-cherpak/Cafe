@@ -26,9 +26,7 @@ public class MappingProfile : Profile
             )
             .ForCtorParam("Total",
                 opt =>
-                    opt.MapFrom(src =>
-                        src.Items.Sum(i => i.UnitPrice * i.Quantity)
-                    )
+                    opt.MapFrom(src => src.Total)
             )
             .ForCtorParam(
                 "Items", opt =>
