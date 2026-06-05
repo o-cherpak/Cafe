@@ -7,5 +7,6 @@ appsettings.Development.json
 .env
 .idea
 .idea/workspace.xml
+*.DotSettings.user 
 Logs/
 Test_Coverage
