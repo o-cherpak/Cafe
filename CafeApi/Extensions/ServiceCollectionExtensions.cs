@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading.RateLimiting;
 using CafeApi.Data;
 using CafeApi.Helpers;
 using CafeApi.Interfaces;
@@ -14,6 +15,7 @@ using CafeApi.Services.TokenService;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
@@ -122,6 +124,32 @@ public static class ServiceCollectionExtensions
                     .AllowAnyMethod();
             });
         });
+        return services;
+    }
+
+    public static IServiceCollection AddRateLimiting(this IServiceCollection services)
+    {
+        services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+            options.AddTokenBucketLimiter("global", opt =>
+            {
+                opt.TokenLimit = 50;
+                opt.ReplenishmentPeriod = TimeSpan.FromMinutes(1);
+                opt.TokensPerPeriod = 25;
+                opt.QueueLimit = 2;
+                opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+            });
+
+            options.AddFixedWindowLimiter("auth", opt =>
+            {
+                opt.Window = TimeSpan.FromSeconds(30);
+                opt.PermitLimit = 5;
+                opt.QueueLimit = 0;
+            });
+        });
+
         return services;
     }
 }

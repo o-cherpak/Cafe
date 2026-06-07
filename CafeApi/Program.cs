@@ -20,6 +20,7 @@ builder.Host.UseSerilog();
 
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddRateLimiting();
 builder.Services.AddControllers();
 
 builder.Services.AddDatabaseContext(builder.Configuration);
@@ -63,6 +64,7 @@ app.UseExceptionHandler();
 app.UseSerilogRequestLogging();
 
 app.UseCors("front");
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
